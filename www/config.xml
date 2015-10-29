@@ -61,7 +61,7 @@
   <gap:splash src="www/res/screen/ios/screen-ipad-portrait.png" gap:platform="ios" width="768" height="1024"/>
   <gap:splash src="www/res/screen/ios/screen-ipad-landscape.png" gap:platform="ios" width="1024" height="768"/>
   <gap:splash src="www/res/screen/windows-phone/screen-portrait.jpg" gap:platform="winphone"/>
-  <gap:plugin name="org.apache.cordova.inappbrowser" version="0.3.3" />
+  <gap:plugin name="org.apache.cordova.inappbrowser" />
   <gap:plugin name="com.oauthio.plugins.oauthio" version="0.2.4" />
   <access origin="*"/>
   <plugin name="cordova-plugin-whitelist"/>
