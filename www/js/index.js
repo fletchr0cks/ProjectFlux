@@ -80,7 +80,7 @@ function onSuccess(position) {
 // onError Callback receives a PositionError object
 //
 function onError(error) {
-    alert('code: ' + error.code + '\n' +
+    alert('geo error code: ' + error.code + '\n' +
               'message: ' + error.message + '\n');
 }
 
@@ -160,43 +160,29 @@ function getWeather() {
     });
 
     $('#tw-connect').on('click', function () {
-        $('#result').html("");
-        OAuth.popup('twitter')
-                        .done(function (r) {
-                            // the access_token is available via r.access_token
-                            // but the http functions automagically wrap the jquery calls
-                            r.get('/1.1/account/verify_credentials.json')
-                                .done(function (data) {
-                                    $('#result').html("twitter: Hello, " + data.name + " !");
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    $('#result').html("req error: " + textStatus);
-                                });
-                        })
-                        .fail(function (e) {
-                            $('#result').html('error: ' + e.message);
-                        });
-                    });
+        $('#result').html("try location");
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+       });
 
-                    $('#st-connect').on('click', function () {
-                        $('#result').html("connecting ...");
-                        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
-                        OAuth.popup('strava', {cache: true}).done(function (r) {
-                            // the access_token is available via r.access_token
-                            // but the http functions automagically wrap the jquery calls
-                            r.get('/oauth/authorize')
-                                .done(function (data) {
-                                    $('#result').html("strava: Hello");
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    $('#result').html("req error: " + textStatus + r.access_token);
+    $('#st-connect').on('click', function () {
+        $('#result').html("connecting ...");
+        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
+        OAuth.popup('strava', {cache: true}).done(function (r) {
+            // the access_token is available via r.access_token
+            // but the http functions automagically wrap the jquery calls
+            r.get('/oauth/authorize')
+                .done(function (data) {
+                    $('#result').html("strava: Hello");
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#result').html("req error: " + textStatus + r.access_token);
                                    
-                                });
-                        })
-                        .fail(function (e) {
-                            $('#result').html('error: ' + e.message);
-                        });
-                    });
+                });
+        })
+        .fail(function (e) {
+            $('#result').html('error: ' + e.message);
+        });
+    });
 
 }
 
