@@ -80,52 +80,45 @@ function onSuccess(position) {
 // onError Callback receives a PositionError object
 //
 function onError(error) {
-    alert('geo error code: ' + error.code + '\n' +
+    alert('code: ' + error.code + '\n' +
               'message: ' + error.message + '\n');
 }
 
-function getBearing(latlng1,latlng2) {
-    //alert(latlng2);
-    var bearing = google.maps.geometry.spherical.computeHeading(latlng1, latlng2);
-    var dist = google.maps.geometry.spherical.computeDistanceBetween(latlng1, latlng2);
-    //alert(bearing);
-    dist = Math.round(parseInt(dist));
-    bearing = Math.round(parseInt(bearing));
-    if (bearing < 0) {
-        bearing = calcBearing(bearing);
+function checkData() {
+
+    if (localStorage.getItem("segdata") === null) {
+    //alert("no data");
+    $('#settings').show();
+        getWeather();
+    } else {
+    //alert("data");
+    $('#settings').hide();
+        drawTable();
     }
-    $('#result2').append(bearing + " " + dist + " <br />");
-}
 
-function calcBearing(val) {
-    var valx = Math.abs(parseInt(val));
-    return (180 - valx) + 180;
 
 }
 
-function decodepoly(polyline) {
+function drawTable() {
     var top = "<ul class=\"table-view\">";
-    var latlong = "ll";
-    var html = "<li class=\"table-view-cell\"><a class=\"navigate-right\">" + latlong + "</a></li>";
-    latlong = google.maps.geometry.encoding.decodePath(polyline);
-    var myStringArray = latlong;
-    var arrayLength = myStringArray.length;
-    for (var i = 0; i < arrayLength; i++) {
-        //getBearing(myStringArray[i].lat(),myStringArray[i].lng());
-        getBearing(myStringArray[i], myStringArray[i+1]);
-        //var lat = myStringArray[i];
-        //$('#result2').html(lat);
-//        alert(myStringArray[i].lng());
-        //Do something
-        //getLat(myStringArray[i]);
-    }
-    
-    //$('#result1').append(latlong);
+    var json = localStorage.getItem('segdata');
+    var j2 = eval('(' + json + ')');
+    var midhtml = "";
+    $.each(j2.segs, function (i, seg) {
+        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ")\">" + seg.name + "<span class=\"badge\">4</span></li>";
+       // alert("i=" + i + "   " + seg.poly);
+    });
+    //alert(midhtml);
 
+    $('#act_table').html(top + midhtml + "</ul>");
+    
 }
 
 function getWeather() {
 
+var strava_segs = {
+    segs: []
+};
     $('#data_status').html("Loading ...");
 
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
@@ -137,20 +130,29 @@ function getWeather() {
         //}).fail(function (err) {
         //todo when the OAuth flow failed
         // });
-
-
         //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
         res.get('https://www.strava.com/api/v3/activities').done(function (data) {
             //https: //www.strava.com/api/v3/activities
             //todo with data
             //alert('Athlete ' + data.lastname);
             var jsontext = JSON.stringify(data);
-            $('#data_status').append(jsontext);
-            var ext = data[0]['map']['summary_polyline'];
-            decodepoly(ext);
-            //var location = json['location']['city'];
-            $('#result1').append(ext);
-            
+            var midhtml = "";
+
+            $.each(data, function (i, seg) {
+                strava_segs.segs.push({
+                    "name": data[i]['name'],
+                    "poly": data[i]['map']['summary_polyline']
+                });
+                //     var name = data[i]['name'];
+                // alert(name);
+                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+            });
+            var jsonsegs = JSON.stringify(strava_segs);
+            localStorage.setItem('segdata', jsonsegs);
+
+            drawTable();
+            //$('#result3').html(eval('(' + strava_segs + ')'));
+
         }).fail(function (err) {
             //todo with err
             alert("fail");
@@ -160,101 +162,46 @@ function getWeather() {
     });
 
     $('#tw-connect').on('click', function () {
-        $('#result').html("try location");
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-       });
+        $('#result').html("");
+        OAuth.popup('twitter')
+                        .done(function (r) {
+                            // the access_token is available via r.access_token
+                            // but the http functions automagically wrap the jquery calls
+                            r.get('/1.1/account/verify_credentials.json')
+                                .done(function (data) {
+                                    $('#result').html("twitter: Hello, " + data.name + " !");
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    $('#result').html("req error: " + textStatus);
+                                });
+                        })
+                        .fail(function (e) {
+                            $('#result').html('error: ' + e.message);
+                        });
+                    });
 
-    $('#st-connect').on('click', function () {
-        $('#result').html("connecting ...");
-        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
-        OAuth.popup('strava', {cache: true}).done(function (r) {
-            // the access_token is available via r.access_token
-            // but the http functions automagically wrap the jquery calls
-            r.get('/oauth/authorize')
-                .done(function (data) {
-                    $('#result').html("strava: Hello");
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    $('#result').html("req error: " + textStatus + r.access_token);
+                    $('#st-connect').on('click', function () {
+                        $('#result').html("connecting ...");
+                        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
+                        OAuth.popup('strava', {cache: true}).done(function (r) {
+                            // the access_token is available via r.access_token
+                            // but the http functions automagically wrap the jquery calls
+                            r.get('/oauth/authorize')
+                                .done(function (data) {
+                                    $('#result').html("strava: Hello");
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    $('#result').html("req error: " + textStatus + r.access_token);
                                    
-                });
-        })
-        .fail(function (e) {
-            $('#result').html('error: ' + e.message);
-        });
-    });
+                                });
+                        })
+                        .fail(function (e) {
+                            $('#result').html('error: ' + e.message);
+                        });
+                    });
 
 }
 
-function testStrava() {
-    var at = "9804cb4fa1ba1227de591a28200ba9da0bb3ca74"
-    $.ajax({
-        type: "GET",
-        url: "https://www.strava.com/api/v3/athlete/activities?per_page=1&access_token=" + at + "&callback=?",
-        //56.052,-2.732
-        //url: "json.txt",
-        //dataType: "html",
-        dataType: "jsonp",
-        success: function (json) {
-            //var jsontxt = eval('(' + json + ')');
-
-            var jsontext = JSON.stringify(json);
-            //var location = json['location']['city'];
-            $('#data_status').append(jsontext);
-
-        },
-        error: function (xhr, error) {
-            console.debug(xhr); console.debug(error);
-        },
-        complete: function () {
-            //load weather
-
-        }
-
-    });
-
-}
-
-
-
-function getWeather2() {
-    alert("here9");
-   
-    var loc = "56.052,-2.732";
-            $.ajax({
-            type: "GET",
-            url: "http://api.wunderground.com/api/bf45926a1b878028/hourly/geolookup/q/" + loc + ".json",
-            //56.052,-2.732
-            //url: "json.txt",
-            //dataType: "html",
-            dataType: "jsonp",
-            success: function(json) {
-                //var jsontxt = eval('(' + json + ')');
-
-                var jsontext = JSON.stringify(json);
-                var location = json['location']['city'];
-                $('#data_status').append("<br /> Location from data local new " + location);
-
-                var epoch = Math.round(new Date().getTime() / 1000)
-                var timenow = new Date();
-                var hour_now = timenow.getHours();
-                var minute_now = timenow.getMinutes();
-                var today = timenow.getDate();
-
-                
-           
-            },
-            error: function(xhr, error) {
-                console.debug(xhr); console.debug(error);
-            },
-            complete: function() {
-                //load weather
-
-            }
-
-        });
-
-}
 
 
 $(document).on('deviceready', function () {

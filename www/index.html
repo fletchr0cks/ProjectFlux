@@ -25,7 +25,7 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-<meta name="viewport" content="target-densitydpi=high-dpi" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
        
          <link href="css/ratchet.css" rel="stylesheet" />
 
@@ -37,7 +37,7 @@
       
 
       <header class="bar bar-nav">
-      <h1 class="title">Ratchet</h1>
+      <h1 class="title">Strava Guru 2</h1>
     </header>
      <div class="bar bar-footer">
       <a class="icon icon-compose pull-right" href="#composeModal"></a>
@@ -45,34 +45,52 @@
     </div>
 
     <div class="content">
+ <div id="act_table"></div>
     <div class="content-padded">
+<div id="canvas-holder" style="width:100%">
+<canvas id="chart-area" width="500" height="300"/>
+</div>
+<div id="map_canvas" style="height:300px;"></div>
+<div id="p1">Chart Status</div>
+<p id="result2">res2</p>
 <div id="geolocation"></div>
     <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
-    <div id="act_table"></div>
-  <p id="result1">res</p>
-  <p id="result2">res2</p>
-            <div id="deviceready" class="blink">
+               <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready Dudes!</p>
-                <button id="fb-connect">Connect to facebook</button>
-            <button id="tw-connect">Connect to twitter</button>
+                <p class="event received">Ready</p>
+                </div>
+                <div id="settings">
+                 <button id="fb-connect">Get Segments</button>
+            <button id="tw-connect">Get Location</button>
              <button id="st-connect">Connect to strava</button>
+             <button onclick="poly1()">draw segment overview</button>
+</div>
+	<button onclick="getW()">get W</button>
+    <button onclick="readW()">read W</button>
+</div>
+   
+  <p id="result3">res3 here</p>
+  
+
+
             <p id="result">hihi</p>
              <p id="data_status">weather</p>
-            </div>
-            </div>
+         
             </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+         <script type="text/javascript" src="js/indexD.js"></script>
          <script type="text/javascript" src="js/oauth.js"></script>
         <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
-
+          <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
+           <script type="text/javascript" src="js/Chart.js"></script>
+          
+        
         <script type="text/javascript">
             app.initialize();
-          
-                $('#data_status').html("Loading ...");
-                getWeather();
+
+            $('#data_status').html("Loading ...");
+                checkData();
 
                 console.log("hihi");
                 

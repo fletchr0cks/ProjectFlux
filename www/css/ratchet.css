@@ -19,6 +19,10 @@ body {
   margin: 0;
 }
 
+#map_canvas {
+        height: 100%;
+      }
+
 article,
 aside,
 details,
