@@ -193,7 +193,18 @@ function drawChart() {
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
-        responsive: true
+        responsive: true,
+        showScale: true,
+        scaleOverride: false,
+        scaleShowLabels: false,
+
+    // ** Required if scaleOverride is true **
+    // Number - The number of steps in a hard coded scale
+    scaleSteps: 1,
+    // Number - The value jump in the hard coded scale
+    scaleStepWidth: 1,
+    // Number - The scale starting value
+    scaleStartValue: 0
     });
 
 }
@@ -216,7 +227,7 @@ function poly1() {
 }
 
 function poly2(i) {
-     initMap();
+     
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
 
@@ -235,6 +246,7 @@ function poly2(i) {
     p11 = 0
     p12 = 0;
     totalDist = 0
+    
     decodepoly(pl);
    
 }
@@ -246,7 +258,7 @@ function decodepoly(polyline) {
    
     latlong = google.maps.geometry.encoding.decodePath(polyline);
     latlong2 = latlong;
-   
+    initMap(latlong);
     var myStringArray1 = latlong;
     var myStringArray2 = latlong2;
     var arrayLength2 = myStringArray2.length;
@@ -405,14 +417,26 @@ function getW() {
 
     }
 
-    function initMap() {
-        alert("returning map2");
+    function initMap(poly) {
+     
         var map = new google.maps.Map(document.getElementById('map_canvas'), {
-            zoom: 4,
-            center: { lat: -33, lng: 151 },
+            zoom: 13,
+            center: { lat: 56.052, lng: -2.732 },
             zoomControl: false,
-            scaleControl: true
+            scaleControl: true,
         });
+
+        //var flightPlanCoordinates = poly;
+
+        var flightPath = new google.maps.Polyline({
+            path: poly,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2            
+        });
+
+        flightPath.setMap(map);
 
     }
 
