@@ -22,6 +22,16 @@ body {
 #map_canvas {
         height: 100%;
       }
+      
+.circular {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	overflow: hidden;
+    -webkit-border-radius: 150px;
+	-moz-border-radius: 150px;
+	border: 1px solid #2fb4c8;
+	}
 
 article,
 aside,
@@ -247,8 +257,8 @@ body {
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 17px;
   line-height: 21px;
-  color: #000;
-  background-color: #fff;
+  color: #f93;
+  background-color: #222226;
 }
 
 a {
@@ -269,7 +279,7 @@ a:active {
   left: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  background-color: #fff;
+  background-color: #222226;
 }
 
 .content > * {
@@ -509,6 +519,10 @@ input[type="button"] {
 
 .bar-footer {
   bottom: 0;
+  color: #2fb4c8;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #000
 }
 
 .bar-footer-secondary {
@@ -539,9 +553,10 @@ input[type="button"] {
   font-size: 17px;
   font-weight: 500;
   line-height: 44px;
-  color: #000;
+  color: #2fb4c8;
   text-align: center;
   white-space: nowrap;
+  background-color: #000
 }
 
 .title a {
@@ -727,7 +742,7 @@ input[type="button"] {
   margin-top: 0;
   margin-bottom: 15px;
   list-style: none;
-  background-color: #fff;
+  background-color: #000;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }

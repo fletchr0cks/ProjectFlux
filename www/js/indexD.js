@@ -100,7 +100,7 @@ function x10(val) {
 }
 
 function drawChart() {
-    p1 = x10(p1);
+    p1 = parseInt(x10(p1));
     p2 = x10(p2);
     p3 = x10(p3);
     p4 = x10(p4);
@@ -115,75 +115,75 @@ function drawChart() {
     $('#p1').html("drawing chart, p1=" + p1);
 
     var obj = [{ value: p1,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p2,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p3,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p4,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p5,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p6,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+       color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
     {
         value: p7,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
+        color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
     },
 	{
 		value: p8,
-		color: "#F7464A",
-		highlight: "#FF5A5E",
-		label: "Red"
+		color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
 	},
 	{
 		value: p9,
-		color: "#46BFBD",
-		highlight: "#5AD3D1",
-		label: "Green"
+		color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
 	},
 	{
 		value: p10,
-		color: "#FDB45C",
-		highlight: "#FFC870",
-		label: "Yellow"
+		color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
 	},
 	{
 		value: p11,
-		color: "#949FB1",
-		highlight: "#A8B3C5",
-		label: "Grey"
+		color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
 	},
 	{
 		value: p12,
-		color: "#4D5360",
-		highlight: "#616774",
-		label: "Dark Grey"
+		color: "#f93",
+        highlight: "#f93",
+        label: "% NNE"
 	}];
 
     localStorage.setItem('gameStorage', JSON.stringify(obj));
@@ -197,6 +197,10 @@ function drawChart() {
         showScale: true,
         scaleOverride: false,
         scaleShowLabels: false,
+        scaleLineColor: "#2fb4c8",
+        segmentShowStroke : false,
+        scaleLineWidth: 1,
+        tooltipTemplate: "<%if (label){%><%= value %><%}%><%=label%>",
 
     // ** Required if scaleOverride is true **
     // Number - The number of steps in a hard coded scale
@@ -222,16 +226,25 @@ function calcBearing(val) {
 
 }
 
+function back() {
+
+ $('#act_table').show();
+ $('#seg_data').hide();
+}
+
 function poly1() {
     decodepoly("}vculjey0cF{jAjK'A");
 }
 
-function poly2(i) {
-     
+function poly2(i,name) {
+    $('#act_table').hide();
+    $('#seg_data').show();
+    $('#static_map').fadeIn();
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
 
     var pl = j2.segs[i].poly;
+    drawMap(pl);
     //alert(pl);
     p1 = 0
     p2 = 0
@@ -246,10 +259,221 @@ function poly2(i) {
     p11 = 0
     p12 = 0;
     totalDist = 0
-    
+    $('#title').html(name);
     decodepoly(pl);
+
    
 }
+
+function drawMap(poly) {
+
+var mapStyle = [{elementType:"geometry",stylers:[{hue:"#ff4400"},{saturation:-68},{lightness:-4},{gamma:.72}]},{featureType:"road",elementType:"labels.icon"},{featureType:"landscape.man_made",elementType:"geometry",stylers:[{hue:"#0077ff"},{gamma:3.1}]},{featureType:"water",stylers:[{hue:"#00ccff"},{gamma:.44},{saturation:-33}]},{featureType:"poi.park",stylers:[{hue:"#44ff00"},{saturation:-23}]},{featureType:"water",elementType:"labels.text.fill",stylers:[{hue:"#007fff"},{gamma:.77},{saturation:65},{lightness:99}]},{featureType:"water",elementType:"labels.text.stroke",stylers:[{gamma:.11},{weight:5.6},{saturation:99},{hue:"#0091ff"},{lightness:-86}]},{featureType:"transit.line",elementType:"geometry",stylers:[{lightness:-48},{hue:"#ff5e00"},{gamma:1.2},{saturation:-23}]},{featureType:"transit",elementType:"labels.text.stroke",stylers:[{saturation:-64},{hue:"#ff9100"},{lightness:16},{gamma:.47},{weight:2.7}]}];
+var bwstyle = [
+    {
+        "featureType": "all",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "saturation": 36
+            },
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 40
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 16
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 20
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 17
+            },
+            {
+                "weight": 1.2
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 20
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 21
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 17
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 29
+            },
+            {
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#0f252e"
+            },
+            {
+                "lightness": 10
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#2fb4c8"
+            },
+            {
+                "lightness": 50
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 80
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#0f252e"
+            },
+            {
+                "lightness": 100
+            }
+        ]
+    }
+];
+var src = get_static_style(bwstyle);
+
+//$("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?center=Cape%20Canaveral&zoom=10&format=png&sensor=false&size=700x320&maptype=roadmap&markers=color:brown|Cape%20Canaveral&"+src+"\">");
+
+var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&" + src + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
+$('#static_map').html(map);
+
+}
+
+function get_static_style(styles) {
+    var result = [];
+    styles.forEach(function(v, i, a){
+        
+        var style='';
+        if( v.stylers ) { // only if there is a styler object
+            if (v.stylers.length > 0) { // Needs to have a style rule to be valid.
+                style += (v.hasOwnProperty('featureType') ? 'feature:' + v.featureType : 'feature:all') + '|';
+                style += (v.hasOwnProperty('elementType') ? 'element:' + v.elementType : 'element:all') + '|';
+                v.stylers.forEach(function(val, i, a){
+                    var propertyname = Object.keys(val)[0];
+                    var propertyval = val[propertyname].toString().replace('#', '0x');
+                    style += propertyname + ':' + propertyval + '|';
+                });
+            }
+        }
+        result.push('style='+encodeURIComponent(style));
+    });
+    
+    return result.join('&');
+}
+
+function maptest() {
+alert("hi");
+var mapStyle = [{elementType:"geometry",stylers:[{hue:"#ff4400"},{saturation:-68},{lightness:-4},{gamma:.72}]},{featureType:"road",elementType:"labels.icon"},{featureType:"landscape.man_made",elementType:"geometry",stylers:[{hue:"#0077ff"},{gamma:3.1}]},{featureType:"water",stylers:[{hue:"#00ccff"},{gamma:.44},{saturation:-33}]},{featureType:"poi.park",stylers:[{hue:"#44ff00"},{saturation:-23}]},{featureType:"water",elementType:"labels.text.fill",stylers:[{hue:"#007fff"},{gamma:.77},{saturation:65},{lightness:99}]},{featureType:"water",elementType:"labels.text.stroke",stylers:[{gamma:.11},{weight:5.6},{saturation:99},{hue:"#0091ff"},{lightness:-86}]},{featureType:"transit.line",elementType:"geometry",stylers:[{lightness:-48},{hue:"#ff5e00"},{gamma:1.2},{saturation:-23}]},{featureType:"transit",elementType:"labels.text.stroke",stylers:[{saturation:-64},{hue:"#ff9100"},{lightness:16},{gamma:.47},{weight:2.7}]}];
+var src = get_static_style(mapStyle);
+
+$("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?center=Cape%20Canaveral&zoom=10&format=png&sensor=false&size=700x320&maptype=roadmap&markers=color:brown|Cape%20Canaveral&"+src+"\">");
+}
+
 
 function decodepoly(polyline) {
    
@@ -258,7 +482,7 @@ function decodepoly(polyline) {
    
     latlong = google.maps.geometry.encoding.decodePath(polyline);
     latlong2 = latlong;
-    initMap(latlong);
+    //initMap(latlong);
     var myStringArray1 = latlong;
     var myStringArray2 = latlong2;
     var arrayLength2 = myStringArray2.length;
@@ -283,6 +507,7 @@ function bearingArray(myStringArray1,totalDist) {
         if (i == (arrayLength1 - 2)) {
             drawChart();
             showP();
+            drawWeather();
         }
     }
 }
@@ -331,15 +556,12 @@ function whichW(bearing, speed) {
 
 }
 
-
-
 function readW() {
     var jsondata = localStorage.getItem('wdata1')
 
     var parsed_json = eval('(' + jsondata + ')');
     //break down into 3 hour chunks and get an average dir and speed
     //push into json arrays
-      
 
     var wvals = {
         chunk: []
@@ -361,7 +583,7 @@ function readW() {
         //wdir":{"dir":"WSW","degrees":"245"
         var wdir = parseInt(zone.wdir.degrees);
         if (hourct < 4) {
-            wchk0 = wchk0 + ws
+            wchk0 = wchk0 + ws;
         } else if (hourct > 3 && hourct < 7) 
 
         
@@ -379,6 +601,190 @@ function readW() {
   
 
 }
+
+
+function drawWeather() {
+    var jsondata = localStorage.getItem('wdata1')
+    var parsed_json = eval('(' + jsondata + ')');
+    
+        //alert("cached");
+        var cutoff = parseInt("16");
+        var location = parsed_json['location']['city'];
+        //alert(location);
+        //var theDatas = new Lawnchair('data');
+        var timenow = new Date();
+        var hour_now = timenow.getHours();
+        var today = timenow.getDate();
+       // var timesaved = theJsonData.timesaved;
+        //if (age == "olddata") {
+    //    $('#loc_result').append("<br /> cached data from: " + age);
+        // }
+      //  var country = parsed_json['location']['country'];
+        //alert("saved= " + json_data);
+        var posy = 54;
+        var posyt = 65;
+        var example = document.getElementById('weather');
+        var ctx2d = example.getContext('2d');
+        ctx2d.fillStyle = "#222226";
+        ctx2d.fillRect(0, 0, 450, 2000);
+        var ni = 1;
+        var done_dt = 0;
+        var first_hour = -1;
+        hour_bg_bk = "000";
+        var totalsnow = 0;
+        //var diff = (Math.round(new Date().getTime() / 1000) - epochdata) / 360;
+        //var hours = Math.round(diff);
+        var dt = parseInt(0);
+        var dt_ct = parseInt(0);
+        var total_score = parseInt(0);
+
+        ctx2d.fillStyle = '#FFF';
+        ctx2d.font = '14px Arial';
+        //ctx2d.fillText("Hourly weather for " + location + ".", 0, 10);
+        //ctx2d.fillText("Last updated: " + hours + " hours ago.", 0, 30);
+
+        ctx2d.fillStyle = "#f2e857";
+        ctx2d.fillRect(0, 10, 60, 16);
+        ctx2d.fillStyle = '#000';
+        ctx2d.font = '11px Arial';
+        ctx2d.fillText("Wind (mph)", 2, 22);
+
+        ctx2d.fillStyle = "#66A68B";
+        ctx2d.fillRect(60, 10, 55, 16);
+        ctx2d.fillStyle = '#FFF';
+        ctx2d.font = '11px Arial';
+        ctx2d.fillText("Temp (C)", 64, 22);
+
+        ctx2d.fillStyle = "#2489ce";
+        ctx2d.fillRect(115, 10, 55, 16);
+        ctx2d.fillStyle = '#FFF';
+        ctx2d.font = '11px Arial';
+        ctx2d.fillText("Rain (mm)", 119, 22);
+
+       // ctx2d.fillStyle = "#FFF";
+       // ctx2d.fillRect(170, 40, 60, 16);
+       // ctx2d.fillStyle = '#000';
+       // ctx2d.font = '11px Arial';
+       // ctx2d.fillText("Snow (mm)", 172, 52);
+
+        $.each(parsed_json.hourly_forecast, function(i, zone) {
+            var imgi = new Image();
+            imgi.src = "http://icons.wxug.com/i/c/i/" + zone.icon + ".gif";
+            var ws = (parseInt(zone.wspd.english) * 6) + 10;
+            var temp = (parseInt(zone.temp.metric) * 3) + 10;
+            var start = 53;
+            if (parseInt(zone.temp.metric) < 1) {
+                start = 42 + (parseInt(zone.temp.metric) * 3);
+                temp = 53 - start;
+            }
+            var hour = zone.FCTTIME.hour;
+            if (hour > 12) {
+                hour = hour - 12
+            }
+            var sky = parseInt(zone.sky);
+            var rain_txt = parseInt(zone.qpf.metric);
+
+            var rain = (parseInt(zone.qpf.metric) * 20) + 10;
+            var snowlen = Math.round(zone.snow.metric);
+            totalsnow = totalsnow + Math.round(zone.snow.metric);
+
+            var snow = (parseInt(zone.snow.metric) * 2) + 10;
+            var hour_bg_bk = "9F9F9F";
+            var wind_bg = "51D251";
+            var temp_bg = "FFB336";
+            var wind_txt = "2f3e46";
+            var temp_txt = "FFF";
+            var ampm = zone.FCTTIME.ampm;
+            if (first_hour == -1) {
+                first_hour = zone.FCTTIME.hour;
+            }
+            var humid = parseInt(zone.humidity);
+            var score = Math.round(((parseInt(zone.wspd.english) * 2) + (parseInt(zone.temp.metric) * 2) + (((100 - sky) / 5) * 4) + (((100 - humid) / 10) * 15)) / 2);
+            var new_score = 0;
+
+            if (humid < 80) {
+                new_score = Math.round((parseInt(zone.wspd.metric) * 3) + (parseInt(zone.temp.metric) * 2) + (100 - sky));
+
+            }
+
+            var cond = zone.condition;
+
+            var yday = parseInt(zone.FCTTIME.yday);
+            var hour_padded = parseInt(zone.FCTTIME.hour);
+            var civil = parseInt(zone.FCTTIME.civil);
+
+            var userhtml = " ";
+
+            //ctx2d.fillStyle = "#778899";
+            //ctx2d.fillRect(0, posy+2, 2, 44);
+            //ctx2d.drawImage(imgi, 2, posy)
+            //here
+            ctx2d.font = '20px Arial';
+            ctx2d.fillStyle = '#FFF';
+            if (hour < 10) {
+
+                ctx2d.fillText(hour, 16, posyt + 10);
+            } else {
+                ctx2d.fillText(hour, 6, posyt + 10);
+            }
+
+            ctx2d.font = '10px Arial';
+            ctx2d.fillText(ampm, 30, posyt + 10);
+
+            //wind
+            ctx2d.fillStyle = "#f2e857";
+            ctx2d.fillRect(53, posy + 16, ws, 16);
+            ctx2d.font = '10px Arial';
+            ctx2d.fillStyle = wind_txt;
+            ctx2d.fillText(zone.wspd.metric, 40 + ws, posyt + 17);
+
+            //temp
+            ctx2d.fillStyle = "#66A68B";
+            ctx2d.fillRect(start, posy + 32, temp, 16);
+            ctx2d.font = '10px Arial';
+            ctx2d.fillStyle = temp_txt;
+            ctx2d.fillText(zone.temp.metric, (start + 2), posyt + 33);
+
+            //rain
+            if (rain == 10 || zone.qpf.metric.length == 0) {
+                ctx2d.fillStyle = "#2489ce";
+                ctx2d.fillRect(53, posy + 48, 10, 16);
+                ctx2d.font = '10px Arial';
+                ctx2d.fillStyle = "FFF";
+                ctx2d.fillText("0", 55, posyt + 49);
+            } else {
+                ctx2d.fillStyle = "#2489ce";
+                ctx2d.fillRect(53, posy + 48, rain, 16);
+                ctx2d.font = '10px Arial';
+                ctx2d.fillStyle = "FFF";
+                ctx2d.fillText(rain_txt, 45 + rain, posyt + 49);
+            }
+
+
+            //snow
+           // ctx2d.fillStyle = "#FFF";
+           // ctx2d.fillRect(53, posy + 64, snow, 16);
+          //  ctx2d.font = '10px Arial';
+          //  ctx2d.fillStyle = "#000";
+          //  ctx2d.fillText(parseInt(zone.snow.metric), 53 + snow - (snowlen.toString().length * 12), posyt + 65);
+
+            total_score = total_score + new_score;
+
+            dt_ct = dt_ct + 1;
+
+            ctx2d.font = '12px Arial';
+            ctx2d.fillStyle = "#FFF";
+            ctx2d.fillText(cond, 53, posyt);
+
+            ctx2d.font = '13px Arial Bold ';
+
+            posy = posy + 76;
+            posyt = posyt + 76;
+
+        });
+
+}
+
 
 function getW() {
     var loc = "56.052,-2.732";
@@ -401,8 +807,7 @@ function getW() {
                 var hour_now = timenow.getHours();
                 var minute_now = timenow.getMinutes();
                 var today = timenow.getDate();
-
-                
+                               
            
             },
             error: function(xhr, error) {
@@ -416,6 +821,9 @@ function getW() {
         });
 
     }
+
+    //https://maps.googleapis.com/maps/api/staticmap?size=400x400&path=weight:3%7Ccolor:orange%7Cenc:polyline_data&key=YOUR_API_KEY
+
 
     function initMap(poly) {
      

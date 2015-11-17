@@ -85,14 +85,15 @@ function onError(error) {
 }
 
 function checkData() {
-
+    
     if (localStorage.getItem("segdata") === null) {
     //alert("no data");
     $('#settings').show();
         getWeather();
     } else {
     //alert("data");
-    $('#settings').hide();
+        $('#settings').hide();
+        getWeather();
         drawTable();
     }
 
@@ -105,7 +106,7 @@ function drawTable() {
     var j2 = eval('(' + json + ')');
     var midhtml = "";
     $.each(j2.segs, function (i, seg) {
-        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ")\">" + seg.name + "<span class=\"badge\">4</span></li>";
+        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + "<span class=\"badge\">4</span></li>";
        // alert("i=" + i + "   " + seg.poly);
     });
     //alert(midhtml);
@@ -119,17 +120,18 @@ function getWeather() {
 var strava_segs = {
     segs: []
 };
+
+var strava_deets = {
+    deets: []
+};
     $('#data_status').html("Loading ...");
 
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
 
     $('#fb-connect').on('click', function () {
         res = OAuth.create('strava');
-        //res.me().done(function (me) {
-        //    alert('Hello ' + me.name);
-        //}).fail(function (err) {
-        //todo when the OAuth flow failed
-        // });
+       
+
         //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
         res.get('https://www.strava.com/api/v3/activities').done(function (data) {
             //https: //www.strava.com/api/v3/activities
@@ -161,6 +163,81 @@ var strava_segs = {
 
     });
 
+    $('#st-test').on('click', function () {
+        res = OAuth.create('strava');
+         res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+        //    alert('Athlete ' + data.lastname);
+            
+                strava_deets.deets.push({
+                    "lastname": data.lastname,
+                    "firstname": data.firstname,
+                    "pic": data.profile_medium,
+                    "city": data.city,
+                    "country": data.country
+
+                //     var name = data[i]['name'];
+                // 
+                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+            });
+            var jsondeets = JSON.stringify(strava_deets);
+            localStorage.setItem('segdata', jsondeets);
+            //alert(jsondeets);
+            //drawTable();
+            //$('#result3').html(eval('(' + strava_segs + ')'));
+
+        }).fail(function (err) {
+            //todo with err
+            alert("fail");
+        });
+        //res.me().done(function (me) {
+        //    alert('Hello ' + me.name);
+        //}).fail(function (err) {
+        //todo when the OAuth flow failed
+        // });
+        //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+        //res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
+        //res.get('https://www.strava.com/api/v3/activities?id=421422146', { data: { id: 421422146} }).done(function (data) {
+        //works: res.get('https://www.strava.com/api/v3/segments/explore', { data: { bounds: '37.821362,-122.505373,37.842038,-122.465977'} }).done(function (data) {
+            //https: //www.strava.com/api/v3/segments/explore
+//            result.post('/message', {
+  //              data: {
+    //                user_id: 93,
+      //              content: 'Hello Mr. 93 !'
+        //        }
+        //    })
+
+
+       // res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+            //
+            //todo with data
+            
+         //   var jsontext = JSON.stringify(data);
+            //       var midhtml = "";
+            //alert(jsontext);
+            //      $.each(data, function (i, seg) {
+            //          strava_segs.segs.push({
+            //              "name": data[i]['name'],
+            //              "poly": data[i]['map']['summary_polyline']
+            //          });
+            //     var name = data[i]['name'];
+            // alert(name);
+            //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+            //   });
+            //   var jsonsegs = JSON.stringify(strava_segs);
+            //   localStorage.setItem('segdata', jsonsegs);
+
+            //   drawTable();
+            //$('#result3').html(eval('(' + strava_segs + ')'));
+
+        //}).fail(function (err) {
+            //todo with err
+         //   alert("fail2");
+       // });
+        //    r.get('').done(function (data2) {
+
+    });
+
+
     $('#tw-connect').on('click', function () {
         $('#result').html("");
         OAuth.popup('twitter')
@@ -180,25 +257,25 @@ var strava_segs = {
                         });
                     });
 
-                    $('#st-connect').on('click', function () {
-                        $('#result').html("connecting ...");
-                        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
-                        OAuth.popup('strava', {cache: true}).done(function (r) {
-                            // the access_token is available via r.access_token
-                            // but the http functions automagically wrap the jquery calls
-                            r.get('/oauth/authorize')
-                                .done(function (data) {
-                                    $('#result').html("strava: Hello");
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    $('#result').html("req error: " + textStatus + r.access_token);
+    $('#st-connect').on('click', function () {
+        $('#result').html("connecting ...");
+        //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
+        OAuth.popup('strava', {cache: true}).done(function (r) {
+            // the access_token is available via r.access_token
+            // but the http functions automagically wrap the jquery calls
+            r.get('/oauth/authorize')
+                .done(function (data) {
+                    $('#result').html("strava: Hello");
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#result').html("req error: " + textStatus + r.access_token);
                                    
-                                });
-                        })
-                        .fail(function (e) {
-                            $('#result').html('error: ' + e.message);
-                        });
-                    });
+                });
+        })
+        .fail(function (e) {
+            $('#result').html('error: ' + e.message);
+        });
+    });
 
 }
 

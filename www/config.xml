@@ -67,7 +67,6 @@
   <preference name="EnableViewportScale" value="true"/>
   <gap:plugin name="com.oauthio.plugins.oauthio" version="0.2.4" />
   <access origin="*"/>
-  <plugin name="cordova-plugin-whitelist"/>
   <allow-navigation href="http://*/*" />
   <allow-intent href="http://*/*"/>
   <allow-intent href="https://*/*"/>

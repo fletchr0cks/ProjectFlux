@@ -22,13 +22,12 @@
 <html>
     <head>
         <meta charset="utf-8" />
-       <meta name="format-detection" content="telephone=no" />
+        <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
 <meta name="viewport" content="target-densitydpi=high-dpi" />
        
          <link href="css/ratchet.css" rel="stylesheet" />
-
 
     <!-- Include the compiled Ratchet JS -->
     <script src="js/ratchet.js"></script>
@@ -48,9 +47,27 @@
     <div class="content">
  <div id="act_table"></div>
     <div class="content-padded">
-<div id="canvas-holder" style="width:100%">
-<canvas id="chart-area" width="500" height="300"/>
+    
+<div id="seg_data">
+<table><tr>
+<td><h4 id="title"></h4></td><td><h4 onclick="back()">Back</h4></td>
+</tr>
+<tr>
+<td><div class="circular" id="static_map">
 </div>
+</td>
+<td>
+<div id="canvas-holder">
+<canvas id="chart-area" width="170px" height=170px"/>
+</div>
+</td>
+</tr>
+</table>
+<div id="canvas-holder2">
+<canvas id="weather" width="300px" height="1000px"/>
+</div>
+</div>
+<div id="teststuff" style="visibility:hidden">
 <div id="map_canvas" style="height:300px;"></div>
 <div id="p1">Chart Status</div>
 <p id="result2">res2</p>
@@ -61,23 +78,23 @@
                 <p class="event received">Ready</p>
                 </div>
                 <div id="settings">
-                 <button id="fb-connect">Get Segments</button>
+                 
             <button id="tw-connect">Get Location</button>
-             <button id="st-connect">Connect to strava</button>
+             
              <button onclick="poly1()">draw segment overview</button>
 </div>
 	<button onclick="getW()">get W</button>
-    <button onclick="readW()">read W</button>
+    <button onclick="drawWeather()">read W</button>
+    <button id="st-connect">Connect to strava</button>
+    <button id="fb-connect">Get Segments</button>
+    <button id="st-test">st test</button>
+    <button onclick="maptest()">map test</button>
+<p id="result3">res3 here</p>
+<p id="result">hihi</p>
+<p id="data_status">weather</p>
 </div>
-   
-  <p id="result3">res3 here</p>
-  
-
-
-            <p id="result">hihi</p>
-             <p id="data_status">weather</p>
-         
-            </div>
+</div>
+</div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
          <script type="text/javascript" src="js/indexD.js"></script>
