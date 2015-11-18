@@ -625,7 +625,7 @@ function drawWeather() {
         var posyt = 65;
         var example = document.getElementById('weather');
         var ctx2d = example.getContext('2d');
-        ctx2d.fillStyle = "#222226";
+        ctx2d.fillStyle = "#000";
         ctx2d.fillRect(0, 0, 450, 2000);
         var ni = 1;
         var done_dt = 0;
@@ -661,6 +661,18 @@ function drawWeather() {
         ctx2d.font = '11px Arial';
         ctx2d.fillText("Rain (mm)", 119, 22);
 
+        ctx2d.beginPath();
+        ctx2d.moveTo(1, 50);
+        ctx2d.lineTo(1, 1000);
+        ctx2d.strokeStyle = "#2fb4c8";
+        ctx2d.stroke();
+
+        ctx2d.beginPath();
+        ctx2d.moveTo(300, 50);
+        ctx2d.lineTo(300, 1000);
+        ctx2d.strokeStyle = "#2fb4c8";
+        ctx2d.stroke();
+
        // ctx2d.fillStyle = "#FFF";
        // ctx2d.fillRect(170, 40, 60, 16);
        // ctx2d.fillStyle = '#000';
@@ -690,6 +702,7 @@ function drawWeather() {
 
             var snow = (parseInt(zone.snow.metric) * 2) + 10;
             var hour_bg_bk = "9F9F9F";
+            var border = "2fb4c8";
             var wind_bg = "51D251";
             var temp_bg = "FFB336";
             var wind_txt = "2f3e46";
@@ -730,6 +743,12 @@ function drawWeather() {
 
             ctx2d.font = '10px Arial';
             ctx2d.fillText(ampm, 30, posyt + 10);
+
+            //border
+            ctx2d.fillStyle = "#2fb4c8";
+            ctx2d.fillRect(0, posy - 5, 300, 1);
+            
+            //ctx2d.fillRect(posy - 5, posy + 76, 81, 1);
 
             //wind
             ctx2d.fillStyle = "#f2e857";

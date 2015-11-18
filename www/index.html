@@ -37,8 +37,10 @@
       
 
       <header class="bar bar-nav">
-      <h1 class="title">Strava Guru 2</h1>
-    </header>
+  <a class="icon icon-left-nav pull-left" onclick="back()"></a>
+  <a class="icon icon-compose pull-right"></a>
+  <h1 class="title">Strava Guru</h1>
+</header>
      <div class="bar bar-footer">
       <a class="icon icon-compose pull-right" href="#composeModal"></a>
       <small class="updated-text">Updated just now</small>
@@ -46,27 +48,37 @@
 
     <div class="content">
  <div id="act_table"></div>
-    <div class="content-padded">
-    
+   
 <div id="seg_data">
-<table><tr>
-<td><h4 id="title"></h4></td><td><h4 onclick="back()">Back</h4></td>
-</tr>
+<div class="divhead" id="title"></div>
+
+<table style="width:100%">
 <tr>
-<td><div class="circular" id="static_map">
+<td align="center">
+<div class="minihead">Segment Profile</div>
+<div class="circular" id="static_map">
 </div>
 </td>
-<td>
+<td align="center">
+<div class="minihead">Segment Headings</div>
 <div id="canvas-holder">
-<canvas id="chart-area" width="170px" height=170px"/>
+<canvas id="chart-area" width="140px" height=140px"/>
 </div>
+</td>
+</tr>
+<tr>
+<td align="left">
+<div class="stats">Distance: 2km</div>
+<div class="stats">Height: 2km</div>
 </td>
 </tr>
 </table>
-<div id="canvas-holder2">
+<div class="minihead">Weather</div>
+<div id="canvas-holder2" style="text-align:center">
 <canvas id="weather" width="300px" height="1000px"/>
 </div>
 </div>
+
 <div id="teststuff" style="visibility:hidden">
 <div id="map_canvas" style="height:300px;"></div>
 <div id="p1">Chart Status</div>
@@ -93,7 +105,7 @@
 <p id="result">hihi</p>
 <p id="data_status">weather</p>
 </div>
-</div>
+
 </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
