@@ -38,7 +38,7 @@
 
       <header class="bar bar-nav">
   <a class="icon icon-left-nav pull-left" onclick="back()"></a>
-  <a class="icon icon-compose pull-right"></a>
+  <a class="icon icon-compose pull-right" onclick="showBtns()"></a>
   <h1 class="title">Strava Guru</h1>
 </header>
      <div class="bar bar-footer">
@@ -47,9 +47,33 @@
     </div>
 
     <div class="content">
- <div id="act_table"></div>
+    <div id="main_menu">
+    <ul class="table-view">
+  <li class="table-view-cell">
+    <a class="navigate-right"  onclick="getAct()">
+     
+      My Activities
+    </a>
+  </li>
+  <li class="table-view-cell">
+    <a class="navigate-right" onclick="getNearby()" id="nearby">
    
-<div id="seg_data">
+      Segments Nearby
+    </a>
+  </li>
+  
+</ul>
+</div>
+
+ <div id="seg_nearby" style="display:none">map
+ 	<div id="map_canvas_nearby" style="height:300px;"></div>
+    <div id="map_msg"></div>
+    <div id="place_name"></div>
+ </div>
+
+ <div id="act_table" style="display:none"></div>
+   
+<div id="seg_data" style="display:none">
 <div class="divhead" id="title"></div>
 
 <table style="width:100%">
@@ -62,13 +86,13 @@
 <td align="center">
 <div class="minihead">Segment Headings</div>
 <div id="canvas-holder">
-<canvas id="chart-area" width="140px" height=140px"/>
+<canvas id="chart-area" width="150px" height=150px"/>
 </div>
 </td>
 </tr>
 <tr>
 <td align="left">
-<div class="stats">Distance: 2km</div>
+<div class="stats">Distance: 2km </br> more info </div>
 <div class="stats">Height: 2km</div>
 </td>
 </tr>
@@ -79,7 +103,7 @@
 </div>
 </div>
 
-<div id="teststuff" style="visibility:hidden">
+<div id="teststuff" style="display:none">
 <div id="map_canvas" style="height:300px;"></div>
 <div id="p1">Chart Status</div>
 <p id="result2">res2</p>
@@ -94,7 +118,6 @@
             <button id="tw-connect">Get Location</button>
              
              <button onclick="poly1()">draw segment overview</button>
-</div>
 	<button onclick="getW()">get W</button>
     <button onclick="drawWeather()">read W</button>
     <button id="st-connect">Connect to strava</button>
@@ -105,12 +128,14 @@
 <p id="result">hihi</p>
 <p id="data_status">weather</p>
 </div>
-
+</div>
 </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
          <script type="text/javascript" src="js/indexD.js"></script>
          <script type="text/javascript" src="js/oauth.js"></script>
+         <script type="text/javascript" src="js/mapsapijs.js"></script>
+<script src="js/markerclusterer.js"></script>
         <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
           <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
            <script type="text/javascript" src="js/Chart.js"></script>

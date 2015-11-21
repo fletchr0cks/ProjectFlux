@@ -92,28 +92,42 @@ function checkData() {
         getWeather();
     } else {
     //alert("data");
-        $('#settings').hide();
+        //$('#settings').hide();
         getWeather();
-        drawTable();
+        
     }
 
 
 }
 
+function getAct() {
+    $('#main_menu').hide();
+    drawTable();
+}
+
+function getNearby() {
+    $('#main_menu').hide();
+    $('#seg_nearby').show();
+    // getSegsbyBounds();
+    showmap();
+}
+
 function drawTable() {
+    $('#act_table').show();
     var top = "<ul class=\"table-view\">";
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
     var midhtml = "";
     $.each(j2.segs, function (i, seg) {
-        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + "<span class=\"badge\">4</span></li>";
+        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.dist + ")<span class=\"badge\">4</span></li>";
        // alert("i=" + i + "   " + seg.poly);
     });
     //alert(midhtml);
 
     $('#act_table').html(top + midhtml + "</ul>");
-    
+
 }
+
 
 function getWeather() {
 
@@ -143,7 +157,9 @@ var strava_deets = {
             $.each(data, function (i, seg) {
                 strava_segs.segs.push({
                     "name": data[i]['name'],
-                    "poly": data[i]['map']['summary_polyline']
+                    "poly": data[i]['map']['summary_polyline'],
+                    "dist": data[i]['distance'],
+                    "egain": data[i]['total_elevation_gain']
                 });
                 //     var name = data[i]['name'];
                 // alert(name);
@@ -163,31 +179,20 @@ var strava_deets = {
 
     });
 
-    $('#st-test').on('click', function () {
+    $('#nearby').on('click', function () {
         res = OAuth.create('strava');
-         res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
-        //    alert('Athlete ' + data.lastname);
-            
-                strava_deets.deets.push({
-                    "lastname": data.lastname,
-                    "firstname": data.firstname,
-                    "pic": data.profile_medium,
-                    "city": data.city,
-                    "country": data.country
-
-                //     var name = data[i]['name'];
-                // 
-                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
-            });
-            var jsondeets = JSON.stringify(strava_deets);
-            localStorage.setItem('segdata', jsondeets);
-            //alert(jsondeets);
+         //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+          //alert('Athlete ' + data.lastname);
+        res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
+            var jsondeets = JSON.stringify(data);
+          //  localStorage.setItem('segdata', jsondeets);
+      //      alert(jsondeets);
             //drawTable();
             //$('#result3').html(eval('(' + strava_segs + ')'));
 
         }).fail(function (err) {
             //todo with err
-            alert("fail");
+          //  alert("fail");
         });
         //res.me().done(function (me) {
         //    alert('Hello ' + me.name);
@@ -277,7 +282,7 @@ var strava_deets = {
         });
     });
 
-}
+   }
 
 
 

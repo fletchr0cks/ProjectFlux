@@ -193,7 +193,7 @@ function drawChart() {
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
-        responsive: true,
+        responsive: false,
         showScale: true,
         scaleOverride: false,
         scaleShowLabels: false,
@@ -227,13 +227,227 @@ function calcBearing(val) {
 }
 
 function back() {
-
- $('#act_table').show();
+if($('#seg_data').is(':visible')) {
+     $('#act_table').show();
  $('#seg_data').hide();
+} else {
+$('#main_menu').show();
+ $('#act_table').hide();
+  $('#seg_nearby').hide();
+  //  drawTable();
+}
+}
+
+function showBtns() {
+    $('#settings').show();
+    $('#teststuff').show();
+  
 }
 
 function poly1() {
     decodepoly("}vculjey0cF{jAjK'A");
+}
+
+var timera;
+var timerb;
+var timerc;
+var timerd;
+
+function startmap() {
+    clearTimeout(timera);
+    //var position = getPosition();
+
+    //var latlng = position.split(',');
+    var lat = "56.058168";
+    var lng = "-2.719811";
+    var map = new GoogleMap(lat,lng);
+    map.initialize();
+    //google.maps.event.trigger(map, 'resize');
+
+}
+
+function showmap() {
+    timera = setInterval(function() { startmap() }, 1000);
+}
+
+function GoogleMap(lat,lng) {
+ //   $("#map_overlay").fadeIn();
+    //alert(lat + lng);
+    this.initialize = function() {
+
+        var map = showMap();
+      
+    }
+    var showMap = function() {
+    
+        var mapOptions = {
+            zoom: 16,
+            center: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(document.getElementById("map_canvas_nearby"), mapOptions)
+        var bounds;
+
+        google.maps.event.addListener(map, 'bounds_changed', (function() {
+            bounds = map.getBounds();
+            $("#map_msg").html("Map moved ...");
+            var timer;
+            return function() {
+                clearTimeout(timer);
+                timer = setTimeout(function() {
+
+                    bounds = map.getBounds();
+                   $("#map_msg").html("Downloading sites ...");
+                    setMarkers(map, bounds, "0");
+                }, 2000);
+            }
+        } ()));
+
+
+        infowindow = new google.maps.InfoWindow({
+            content: "holding..."
+        });
+        $("#map_msg").html("Loading markers ... ");
+
+        return map;
+    }
+
+}
+
+var markers = [];
+
+function removeMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+        markers.length=0;
+
+      }
+var timer_m;
+
+function setMarkers(map, bounds_map, PID) {
+    clearTimeout(timer_m);
+    //var bds_fmt = "50,-4,60,4";
+    var bds_fmt = format_bounds(bounds_map.toString());
+    var marktxt = "";
+    //alert(bds_fmt);
+    removeMarkers();
+    var markers_array = [];
+    var seg_loc_data = {
+    points: []
+    };
+
+    var ct = 0;
+    if (parseInt(PID) > 0) {
+//        var infoWindowLive = new google.maps.InfoWindow({ content: 'This one: ' + PID });
+    }
+    //var timage = 'marker_search.png';
+    //var position = getPosition();
+    //var latlng = position.split(',');
+    //var tlat = latlng[0];
+    //var tlng = latlng[1];
+    var tlat = "56.058168";
+    var tlng = "-2.719811";
+  //  var hereLatLng = new google.maps.LatLng(latlng);
+    OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
+    res = OAuth.create('strava');
+        res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
+            var jsondeets = JSON.stringify(data);
+        
+         $.each(data.segments, function (i, seg) {
+               // alert(seg.start_latlng[0]);
+                seg_loc_data.points.push({             
+                    "name": seg.name,
+                    "lat": seg.start_latlng[0],
+                    "longval": seg.start_latlng[1],
+                    "PID": seg.id                    
+                });
+                    
+          });
+       
+    //    $.each(seg_loc_data.points, function(i, markers) {
+               // console.log(json);
+            //   alert(markers.name);
+
+       //        });
+  //  /$.ajax({
+  //      type: "GET",
+  //      url: "http://uksledge.apphb.com/Home/GetSitesInRange",
+        //url: "http://localhost:3192/Home/GetSitesInRange",
+ //       data: "bounds=" + bds_fmt,
+ //       dataType: "jsonp",
+ //       success: function(json) {
+            var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
+           // ct = json.ct; //56.208,-3.15
+        //    alert(JSON.stringify(json_loc));
+           // alert(JSON.stringify(seg_loc_data));
+//            $.merge(json.points, json_loc.points);
+      //      var jsontext = JSON.stringify(json);
+           // alert(jsontext);
+            $.each(seg_loc_data.points, function(i, markers) {
+               // console.log(json);
+         //      alert("hihi");
+                if (markers.PID == parseInt(PID)) {
+                 //   var image = 'marker_search.png';
+                    //ListComments(markers.PID);
+                    $('#place_name').html(markers.name);
+                } else if (markers.PID == 1) {
+                 //   var image = 'marker_search.png';
+                } else {
+                 //   var image = 'marker_s4.png';
+                }
+                //var infoWindow = new google.maps.InfoWindow({ content: 'Place ID' + markers.PID });
+                var siteLatLng = new google.maps.LatLng(markers.lat, markers.longval);
+                //var markerp = new google.maps.Marker({ 'position': siteLatLng, 'icon': image });
+                var markerp = new google.maps.Marker({ 'position': siteLatLng});
+                if (markers.name == "You are here!") {
+                } else {
+                    markers_array.push(markerp);
+                }
+                google.maps.event.addListener(markerp, "click", function() {
+                    //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
+                    if (markers.PID != 1) {
+                      //  ListComments(markers.PID);
+                        $('#place_name').html(markers.name);
+                    } else {
+                    $('#place_name').html(markers.name);
+                    }
+                    //infoWindow.open(map, markerp);
+                });
+
+            });
+
+
+            var mcOptions = { gridSize: 100, maxZoom: 18 };
+            $("#map_overlay").fadeOut();
+            var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
+     
+            var bannermsg = "";
+            if (ct == 0) {
+                $("#map_msg").html("No sledging sites in this view.");
+
+            } else {
+                $("#map_msg").html(ct + " Loaded. Click to see comments.");
+
+            }
+
+  
+        
+        }).fail(function (err) {
+            alert("fail");
+        });
+
+    
+}
+
+function format_bounds(bds) {
+
+var bds2 = bds.replace("((","");
+var bds3 = bds2.replace("))","");
+var bds4 = bds3.replace("), (",",");
+var bds5 = bds4.replace(" ","");
+var bds6 = bds5.replace(" ","");
+return(bds6);
 }
 
 function poly2(i,name) {
@@ -672,6 +886,10 @@ function drawWeather() {
         ctx2d.lineTo(300, 1000);
         ctx2d.strokeStyle = "#2fb4c8";
         ctx2d.stroke();
+        //ctx2d.save();
+        //ctx2d.rotate(60);
+	//	ctx2d.lineWidth = 1;
+	//	
 
        // ctx2d.fillStyle = "#FFF";
        // ctx2d.fillRect(170, 40, 60, 16);
@@ -680,10 +898,13 @@ function drawWeather() {
        // ctx2d.fillText("Snow (mm)", 172, 52);
 
         $.each(parsed_json.hourly_forecast, function(i, zone) {
+        //ctx2d.restore();
+        
             var imgi = new Image();
             imgi.src = "http://icons.wxug.com/i/c/i/" + zone.icon + ".gif";
             var ws = (parseInt(zone.wspd.english) * 6) + 10;
             var temp = (parseInt(zone.temp.metric) * 3) + 10;
+            var winddeg = parseInt(zone.wdir.degrees);
             var start = 53;
             if (parseInt(zone.temp.metric) < 1) {
                 start = 42 + (parseInt(zone.temp.metric) * 3);
@@ -744,18 +965,44 @@ function drawWeather() {
             ctx2d.font = '10px Arial';
             ctx2d.fillText(ampm, 30, posyt + 10);
 
-            //border
+            //divide line
             ctx2d.fillStyle = "#2fb4c8";
             ctx2d.fillRect(0, posy - 5, 300, 1);
-            
-            //ctx2d.fillRect(posy - 5, posy + 76, 81, 1);
+
+            //arrow
+           
+        ctx2d.save();
+		ctx2d.translate(20, posy + 10);
+		ctx2d.rotate(80 * Math.PI / 180);
+        
+		ctx2d.lineWidth = 1;
+		ctx2d.fillStyle = "#2fb4c8";
+		ctx2d.beginPath();
+		//ctx2d.moveTo(30, -5);
+        //ctx2d.fillRect(-5, -5, 10, 10);
+		ctx2d.lineTo(40,-5);
+		ctx2d.lineTo(40,-10);
+		ctx2d.lineTo(50,0);
+		ctx2d.lineTo(40,10);
+		ctx2d.lineTo(40,5);
+		ctx2d.lineTo(30,5);
+		ctx2d.lineTo(30,-5);
+		ctx2d.closePath();
+		ctx2d.fill();
+		ctx2d.stroke();
+        //ctx2d.rotate(-(20*Math.PI/180));
+		ctx2d.restore();
+
+
 
             //wind
             ctx2d.fillStyle = "#f2e857";
-            ctx2d.fillRect(53, posy + 16, ws, 16);
+            ctx2d.fillRect(53, posy + 16, ws + 20, 16);
+
             ctx2d.font = '10px Arial';
-            ctx2d.fillStyle = wind_txt;
-            ctx2d.fillText(zone.wspd.metric, 40 + ws, posyt + 17);
+            ctx2d.fillStyle = "#000";
+            ctx2d.fillText("mph", 73, posyt + 17);
+            ctx2d.fillText(zone.wspd.metric, 53, posyt + 17);
 
             //temp
             ctx2d.fillStyle = "#66A68B";
@@ -799,10 +1046,39 @@ function drawWeather() {
 
             posy = posy + 76;
             posyt = posyt + 76;
+           // ctx2d.save();
 
         });
 
 }
+
+var Arrow = function (o) {
+	this.x = o.x | 0;
+	this.y = o.y | 0;
+	this.color = o.color || "#ffffff";
+	this.rotation = o.rotation | 0;
+	this.draw = function () {
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.rotate(this.rotation);
+		ctx.lineWidth = 1;
+		ctx.fillStyle = this.color;
+		ctx.beginPath();
+		ctx.moveTo(-10, -5);
+		ctx.lineTo(0, -5);
+		ctx.lineTo(0, -10);
+		ctx.lineTo(10, 0);
+		ctx.lineTo(0, 10);
+		ctx.lineTo(0, 5);
+		ctx.lineTo(-10, 5);
+		ctx.lineTo(-10, -5);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+		ctx.restore();
+	};
+};
+
 
 
 function getW() {

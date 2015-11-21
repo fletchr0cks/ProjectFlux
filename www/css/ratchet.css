@@ -35,7 +35,9 @@ body {
 
 .stats 
 {
-    padding-left: 10px;
+    padding-left: 15px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     font-size: 12px;
     color: #2fb4c8
 }
@@ -45,14 +47,17 @@ body {
     font-size: 14px;
     color: white;
     text-align: center;
+    padding-bottom: 10px;
+    padding-top: 5px;
 }
 
 .divhead 
 {
-    background-color: #222226;
+    background-color: #000;
     padding: 5px;
-    color: White;
+    color: #f93;
     text-align: center;
+    border: 1px solid #f93;
 }
 
 article,
@@ -1301,8 +1306,8 @@ select {
   font-style: normal;
   font-weight: normal;
 
-  src: url("../fonts/ratchicons.eot");
-  src: url("../fonts/ratchicons.eot?#iefix") format("embedded-opentype"), url("../fonts/ratchicons.woff") format("woff"), url("../fonts/ratchicons.ttf") format("truetype"), url("../fonts/ratchicons.svg#svgFontName") format("svg");
+  src: url("ratchicons.eot");
+  src: url("ratchicons.eot?#iefix") format("embedded-opentype"), url("ratchicons.woff") format("woff"), url("ratchicons.ttf") format("truetype"), url("ratchicons.svg#svgFontName") format("svg");
 }
 .icon {
   display: inline-block;
