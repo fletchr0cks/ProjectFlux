@@ -323,6 +323,23 @@ function removeMarkers() {
         markers.length=0;
 
       }
+      
+var mappoly;
+var flightPlanCoordinates;
+var polyline;
+
+function addPolyline(el){
+    polyName = new google.maps.Polyline({
+        path: el,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+  });
+  return polyName;
+}
+
+
+      
 var timer_m;
 
 function setMarkers(map, bounds_map, PID) {
@@ -355,14 +372,15 @@ function setMarkers(map, bounds_map, PID) {
             var jsondeets = JSON.stringify(data);
         
          $.each(data.segments, function (i, seg) {
-               // alert(seg.start_latlng[0]);
+            //alert(seg.start_latlng[0]);
                 seg_loc_data.points.push({             
                     "name": seg.name,
                     "lat": seg.start_latlng[0],
                     "longval": seg.start_latlng[1],
-                    "PID": seg.id                    
+                    "PID": seg.id,
+                    "points": seg.points                    
                 });
-                    
+                    ct++;
           });
        
     //    $.each(seg_loc_data.points, function(i, markers) {
@@ -404,6 +422,11 @@ function setMarkers(map, bounds_map, PID) {
                 } else {
                     markers_array.push(markerp);
                 }
+                
+             //   alert(markers.points);
+                alert("adding2: ");
+                   // addPolyline(markers.points).setMap(map);
+                initMap("}g|eFnm@n@Op@VJr@");
                 google.maps.event.addListener(markerp, "click", function() {
                     //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
                     if (markers.PID != 1) {
@@ -411,7 +434,10 @@ function setMarkers(map, bounds_map, PID) {
                         $('#place_name').html(markers.name);
                     } else {
                     $('#place_name').html(markers.name);
+                    
                     }
+                   
+                    
                     //infoWindow.open(map, markerp);
                 });
 
@@ -439,6 +465,9 @@ function setMarkers(map, bounds_map, PID) {
 
     
 }
+
+
+
 
 function format_bounds(bds) {
 
@@ -1082,7 +1111,8 @@ var Arrow = function (o) {
 
 
 function getW() {
-    var loc = "56.052,-2.732";
+    var loc = "37.833,-122.483";
+    //"56.052,-2.732";
             $.ajax({
             type: "GET",
             url: "http://api.wunderground.com/api/bf45926a1b878028/hourly/geolookup/q/" + loc + ".json",
@@ -1122,9 +1152,9 @@ function getW() {
 
     function initMap(poly) {
      
-        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+        var map = new google.maps.Map(document.getElementById('map_canvas_nearby'), {
             zoom: 13,
-            center: { lat: 56.052, lng: -2.732 },
+            center: { lat: 37.833, lng: -122.483 },
             zoomControl: false,
             scaleControl: true,
         });
