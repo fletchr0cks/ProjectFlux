@@ -106,6 +106,7 @@ function getAct() {
 }
 
 function getNearby() {
+    
     $('#main_menu').hide();
     $('#seg_nearby').show();
     // getSegsbyBounds();

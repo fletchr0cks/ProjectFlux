@@ -239,7 +239,7 @@ $('#main_menu').show();
 }
 
 function showBtns() {
-    alert("btns");
+    
     $('#settings').show();
     $('#teststuff').show();
   
@@ -268,6 +268,7 @@ function startmap() {
 }
 
 function showmap() {
+    $('#map_canvas_nearby').show();
     timera = setInterval(function() { startmap() }, 1000);
 }
 
@@ -282,7 +283,7 @@ function GoogleMap(lat,lng) {
     var showMap = function() {
     
         var mapOptions = {
-            zoom: 16,
+            zoom: 14,
             center: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
@@ -372,90 +373,82 @@ function setMarkers(map, bounds_map, PID) {
   //  var hereLatLng = new google.maps.LatLng(latlng);
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
     res = OAuth.create('strava');
-        res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
-            var jsondeets = JSON.stringify(data);
-        
-         $.each(data.segments, function (i, seg) {
+    res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
+        var jsondeets = JSON.stringify(data);
+
+        $.each(data.segments, function (i, seg) {
             //alert(seg.start_latlng[0]);
-                seg_loc_data.points.push({             
-                    "name": seg.name,
-                    "lat": seg.start_latlng[0],
-                    "longval": seg.start_latlng[1],
-                    "PID": seg.id,
-                    "points": seg.points                    
-                });
-                
-                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.id + ")<span class=\"badge\">4</span></li>";
-       // alert("i=" + i + "   " + seg.poly);
-    });
-    //alert(midhtml);
-
-    
-
-                
-                    ct++;
-          });
-              var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
-                       $.each(seg_loc_data.points, function(i, markers) {
-               // console.log(json);
-         //      alert("hihi");
-                if (markers.PID == parseInt(PID)) {
-                 //   var image = 'marker_search.png';
-                    //ListComments(markers.PID);
-                    $('#place_name').html(markers.name);
-                } else if (markers.PID == 1) {
-                 //   var image = 'marker_search.png';
-                } else {
-                 //   var image = 'marker_s4.png';
-                }
-                //var infoWindow = new google.maps.InfoWindow({ content: 'Place ID' + markers.PID });
-                var siteLatLng = new google.maps.LatLng(markers.lat, markers.longval);
-                //var markerp = new google.maps.Marker({ 'position': siteLatLng, 'icon': image });
-                var markerp = new google.maps.Marker({ 'position': siteLatLng});
-                if (markers.name == "You are here!") {
-                } else {
-                    markers_array.push(markerp);
-                }
-                
-             //   alert(markers.points);
-             //   alert(returnpoly(markers.points));
-               
-                //initMap("}g|eFnm@n@Op@VJr@");
-                google.maps.event.addListener(markerp, "click", function() {
-                    //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
-                    if (markers.PID != 1) {
-                      //  ListComments(markers.PID);
-                        $('#place_name').html(markers.name);
-                    } else {
-                    $('#place_name').html(markers.name + decodepoly(markers.points));
-                    
-                    }
-                   
-                     addPolyline(returnpoly(markers.points)).setMap(map);
-                    //infoWindow.open(map, markerp);
-                });
-
+            seg_loc_data.points.push({
+                "name": seg.name,
+                "lat": seg.start_latlng[0],
+                "longval": seg.start_latlng[1],
+                "PID": seg.id,
+                "points": seg.points,
+                "endlat": seg.end_latlng[0],
+                "endlongval": seg.end_latlng[1],
+                "endlatlong": seg.end_latlng
             });
 
-            $('#map_table').html(top + midhtml + "</ul>");
-            var mcOptions = { gridSize: 50, maxZoom: 18 };
-            $("#map_overlay").fadeOut();
-            var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
-     
-            var bannermsg = "";
-            if (ct == 0) {
-                $("#map_msg").html("No sledging sites in this view.");
+            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + " (" + i + ")<span class=\"badge\">4</span></div></li>";
+            ct++;
+        });
 
+        var jsonsegs = JSON.stringify(seg_loc_data);
+        localStorage.setItem('seg_loc_data', jsonsegs);
+        var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
+        $.each(seg_loc_data.points, function (i, markers) {
+            // console.log(json);
+            //      alert("hihi");
+            if (markers.PID == parseInt(PID)) {
+                //   var image = 'marker_search.png';
+                //ListComments(markers.PID);
+                $('#place_name').html(markers.name);
+            } else if (markers.PID == 1) {
+                //   var image = 'marker_search.png';
             } else {
-                $("#map_msg").html(ct + " Loaded. Click to see comments.");
-
+                //   var image = 'marker_s4.png';
+            }
+            //var infoWindow = new google.maps.InfoWindow({ content: 'Place ID' + markers.PID });
+            var siteLatLng = new google.maps.LatLng(markers.lat, markers.longval);
+            //var markerp = new google.maps.Marker({ 'position': siteLatLng, 'icon': image });
+            var markerp = new google.maps.Marker({ 'position': siteLatLng, 'map': map });
+            var endLatLng = new google.maps.LatLng(markers.endlat, markers.endlongval);
+            var endpos = "(" + markers.endlatlong + ")";
+           //     alert(endpos);
+            
+            if (markers.name == "You are here!") {
+            } else {
+                markers_array.push(markerp);
             }
 
-  
-        
-        }).fail(function (err) {
-            alert("fail");
+            //   alert(markers.points);
+            //   alert(returnpoly(markers.points));
+
+            //initMap("}g|eFnm@n@Op@VJr@");
+            google.maps.event.addListener(markerp, "click", function () {
+                //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
+
+                //highlight table entry
+                var marker_end = new google.maps.Marker({ 'position': endLatLng, 'map': map });
+                $('#seg_' + markers.PID).addClass("list");
+                addPolyline(returnpoly(markers.points)).setMap(map);
+                //infoWindow.open(map, markerp);
+            });
+
         });
+
+
+
+        $('#map_table').html(top + midhtml + "</ul>");
+        //var mcOptions = { gridSize: 50, maxZoom: 18 };
+        //var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
+
+
+
+
+    }).fail(function (err) {
+        alert("fail");
+    });
 
     
 }
@@ -472,6 +465,38 @@ var bds5 = bds4.replace(" ","");
 var bds6 = bds5.replace(" ","");
 return(bds6);
 }
+
+function poly_map(i, name) {
+    $('#map_table').hide();
+    $('#seg_data').show();
+    
+    $('#map_canvas_nearby').hide();
+    $('#static_map').fadeIn();
+    var json = localStorage.getItem('seg_loc_data');
+    var j2 = eval('(' + json + ')');
+
+    var pl = j2.points[i].points;
+    drawMap(pl);
+ 
+    p1 = 0
+    p2 = 0
+    p3 = 0
+    p4 = 0
+    p5 = 0
+    p6 = 0
+    p7 = 0
+    p8 = 0
+    p9 = 0
+    p10 = 0
+    p11 = 0
+    p12 = 0;
+    totalDist = 0
+    $('#title').html(name);
+    decodepoly(pl);
+
+
+}
+
 
 function poly2(i,name) {
     $('#act_table').hide();
@@ -920,7 +945,8 @@ function drawWeather() {
         ctx2d.lineTo(300, 1000);
         ctx2d.strokeStyle = "#2fb4c8";
         ctx2d.stroke();
-        //ctx2d.save();
+        ctx2d.translate(0,0);
+        ctx2d.save();
         //ctx2d.rotate(60);
 	//	ctx2d.lineWidth = 1;
 	//	
@@ -1006,21 +1032,32 @@ function drawWeather() {
             //arrow
            
         ctx2d.save();
-		ctx2d.translate(20, posy + 10);
-		ctx2d.rotate(80 * Math.PI / 180);
-        
+		ctx2d.translate(30, posy + 50);
+		ctx2d.rotate(winddeg * Math.PI / 180);
+		
 		ctx2d.lineWidth = 1;
 		ctx2d.fillStyle = "#2fb4c8";
+		//ctx2d.moveTo(60, -15);
+		ctx2d.fillRect(-5, -5, 10, 10);
 		ctx2d.beginPath();
-		//ctx2d.moveTo(30, -5);
-        //ctx2d.fillRect(-5, -5, 10, 10);
-		ctx2d.lineTo(40,-5);
-		ctx2d.lineTo(40,-10);
-		ctx2d.lineTo(50,0);
-		ctx2d.lineTo(40,10);
-		ctx2d.lineTo(40,5);
-		ctx2d.lineTo(30,5);
-		ctx2d.lineTo(30,-5);
+		
+        
+		ctx2d.lineTo(0,-5);
+		ctx2d.lineTo(0,-10);
+		ctx2d.lineTo(10,0);
+		ctx2d.lineTo(0,10);
+		ctx2d.lineTo(0,5);
+		ctx2d.lineTo(-10,5);
+		ctx2d.lineTo(-10, -5);
+
+		//ctx2d.lineTo(40, -5);
+		//ctx2d.lineTo(40, -10);
+		//c/tx2d.lineTo(50, 0);
+		//ctx2d.lineTo(40, 10);
+		//ctx2d.lineTo(40, 5);
+		//ctx2d.lineTo(30, 5);
+		//ctx2d.lineTo(30, -5);
+
 		ctx2d.closePath();
 		ctx2d.fill();
 		ctx2d.stroke();
@@ -1116,7 +1153,8 @@ var Arrow = function (o) {
 
 
 function getW() {
-    var loc = "37.833,-122.483";
+    var loc = "56.052,-2.732";
+    //"37.833,-122.483";
     //"56.052,-2.732";
             $.ajax({
             type: "GET",
@@ -1161,7 +1199,7 @@ function getW() {
             zoom: 13,
             center: { lat: 37.833, lng: -122.483 },
             zoomControl: false,
-            scaleControl: true,
+            scaleControl: true
         });
 
         //var flightPlanCoordinates = poly;
