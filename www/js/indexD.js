@@ -239,6 +239,7 @@ $('#main_menu').show();
 }
 
 function showBtns() {
+    alert("btns");
     $('#settings').show();
     $('#teststuff').show();
   
@@ -343,6 +344,9 @@ function addPolyline(el){
 var timer_m;
 
 function setMarkers(map, bounds_map, PID) {
+     $('#map_table').show();
+    var top = "<ul class=\"table-view\">";
+    var midhtml = "";
     clearTimeout(timer_m);
     //var bds_fmt = "50,-4,60,4";
     var bds_fmt = format_bounds(bounds_map.toString());
@@ -380,29 +384,19 @@ function setMarkers(map, bounds_map, PID) {
                     "PID": seg.id,
                     "points": seg.points                    
                 });
+                
+                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.id + ")<span class=\"badge\">4</span></li>";
+       // alert("i=" + i + "   " + seg.poly);
+    });
+    //alert(midhtml);
+
+    
+
+                
                     ct++;
           });
-       
-    //    $.each(seg_loc_data.points, function(i, markers) {
-               // console.log(json);
-            //   alert(markers.name);
-
-       //        });
-  //  /$.ajax({
-  //      type: "GET",
-  //      url: "http://uksledge.apphb.com/Home/GetSitesInRange",
-        //url: "http://localhost:3192/Home/GetSitesInRange",
- //       data: "bounds=" + bds_fmt,
- //       dataType: "jsonp",
- //       success: function(json) {
-            var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
-           // ct = json.ct; //56.208,-3.15
-        //    alert(JSON.stringify(json_loc));
-           // alert(JSON.stringify(seg_loc_data));
-//            $.merge(json.points, json_loc.points);
-      //      var jsontext = JSON.stringify(json);
-           // alert(jsontext);
-            $.each(seg_loc_data.points, function(i, markers) {
+              var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
+                       $.each(seg_loc_data.points, function(i, markers) {
                // console.log(json);
          //      alert("hihi");
                 if (markers.PID == parseInt(PID)) {
@@ -424,27 +418,27 @@ function setMarkers(map, bounds_map, PID) {
                 }
                 
              //   alert(markers.points);
-                alert("adding2: ");
-                   // addPolyline(markers.points).setMap(map);
-                initMap("}g|eFnm@n@Op@VJr@");
+             //   alert(returnpoly(markers.points));
+               
+                //initMap("}g|eFnm@n@Op@VJr@");
                 google.maps.event.addListener(markerp, "click", function() {
                     //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
                     if (markers.PID != 1) {
                       //  ListComments(markers.PID);
                         $('#place_name').html(markers.name);
                     } else {
-                    $('#place_name').html(markers.name);
+                    $('#place_name').html(markers.name + decodepoly(markers.points));
                     
                     }
                    
-                    
+                     addPolyline(returnpoly(markers.points)).setMap(map);
                     //infoWindow.open(map, markerp);
                 });
 
             });
 
-
-            var mcOptions = { gridSize: 100, maxZoom: 18 };
+            $('#map_table').html(top + midhtml + "</ul>");
+            var mcOptions = { gridSize: 50, maxZoom: 18 };
             $("#map_overlay").fadeOut();
             var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
      
@@ -742,6 +736,17 @@ function decodepoly(polyline) {
 
     
 }
+
+function returnpoly(polyline) {
+   
+    var latlong = [];
+   
+   
+    latlong = google.maps.geometry.encoding.decodePath(polyline);
+    
+    return latlong;
+ 
+ }
 
 function bearingArray(myStringArray1,totalDist) {
     var arrayLength1 = myStringArray1.length;
