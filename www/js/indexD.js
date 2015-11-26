@@ -239,9 +239,9 @@ $('#main_menu').show();
 }
 
 function showBtns() {
-    
-    $('#settings').show();
-    $('#teststuff').show();
+
+    $('#get_activities').show();
+    $('#status_msgs').show();
   
 }
 
@@ -389,7 +389,7 @@ function setMarkers(map, bounds_map, PID) {
                 "endlatlong": seg.end_latlng
             });
 
-            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + " (" + i + ")<span class=\"badge\">4</span></div></li>";
+            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\">4</span></div></li>";
             ct++;
         });
 
@@ -1168,7 +1168,7 @@ function getW() {
 
                 var jsontext = JSON.stringify(json);
                 var location = json['location']['city'];
-                $('#result1').html("<br /> Location from data local new " + location);
+                $('#footer_msg').html("Updated weather for " + location);
                 localStorage.setItem('wdata1', jsontext);
                 var epoch = Math.round(new Date().getTime() / 1000)
                 var timenow = new Date();

@@ -24,9 +24,9 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <!-- changed -->
+    <!-- changed -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
-       
+           
          <link href="css/ratchet.css" rel="stylesheet" />
 
     <!-- Include the compiled Ratchet JS -->
@@ -43,7 +43,7 @@
 </header>
      <div class="bar bar-footer">
       <a class="icon icon-compose pull-right" href="#composeModal"></a>
-      <small class="updated-text">Updated just now</small>
+      <small class="updated-text"><div id="footer_msg">Updated just now</div></small>
     </div>
 
     <div class="content">
@@ -61,15 +61,16 @@
       Segments Nearby
     </a>
   </li>
-  
 </ul>
-
-<button class="btn btn-primary btn-block">Block button</button>
+</div>
+<div id="get_activities" style="display:none">
+<button class="btn btn-primary btn-block" id="fb-connect">Get My Activities</button>
+</div>
 <div id="strava_login" style="display:none">
-<button class="btn btn-positive btn-block">Connect to Strava</button>
+<button class="btn btn-positive btn-block" id="st-connect">Connect to Strava</button>
 </div>
-</div>
-<div id="status_msgs"></div>
+
+<div id="status_msgs" style="display:none"></div>
  <div id="seg_nearby" style="display:none">
  	<div id="map_canvas_nearby" style="height:150px;"></div>
     <div id="map_table"></div>
@@ -103,7 +104,7 @@
 </table>
 <div class="minihead">Weather</div>
 <div id="canvas-holder2" style="text-align:center">
-<canvas id="weather" width="300px" height="1000px"/>
+<canvas id="weather" width="300px" height="1500px"/>
 </div>
 </div>
 
@@ -124,8 +125,8 @@
              <button onclick="poly1()">draw segment overview</button>
 	<button onclick="getW()">get W</button>
     <button onclick="drawWeather()">read W</button>
-    <button id="st-connect">Connect to strava</button>
-    <button id="fb-connect">Get Segments</button>
+    <button id="st-connect_o">Connect to strava</button>
+    <button id="fb-connect_o">Get Segments</button>
     <button id="st-test">st test</button>
     <button onclick="maptest()">map test</button>
 <p id="result3">res3 here</p>
