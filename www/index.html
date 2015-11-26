@@ -24,8 +24,8 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-<meta name="viewport" content="target-densitydpi=high-dpi" />
+        <!-- changed -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
        
          <link href="css/ratchet.css" rel="stylesheet" />
 
@@ -56,15 +56,20 @@
     </a>
   </li>
   <li class="table-view-cell">
-    <a class="navigate-right" onclick="getNearby()" id="nearby">
+    <a class="navigate-right" onclick="getNearby()" id="nearbyxx">
    
       Segments Nearby
     </a>
   </li>
   
 </ul>
-</div>
 
+<button class="btn btn-primary btn-block">Block button</button>
+<div id="strava_login" style="display:none">
+<button class="btn btn-positive btn-block">Connect to Strava</button>
+</div>
+</div>
+<div id="status_msgs"></div>
  <div id="seg_nearby" style="display:none">
  	<div id="map_canvas_nearby" style="height:150px;"></div>
     <div id="map_table"></div>

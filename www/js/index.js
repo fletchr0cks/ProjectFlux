@@ -87,13 +87,15 @@ function onError(error) {
 function checkData() {
     
     if (localStorage.getItem("segdata") === null) {
-    //alert("no data");
-    $('#settings').show();
-        getWeather();
+    $('#status_msgs').append("no data");
+    //$('#settings').show();
+        initBtns();
     } else {
-    //alert("data");
+        //alert("data");
+        var data = localStorage.getItem("segdata");
+        $('#status_msgs').append("data </br> " + data);
         //$('#settings').hide();
-        getWeather();
+        initBtns();
         
     }
 
@@ -106,11 +108,17 @@ function getAct() {
 }
 
 function getNearby() {
-    
-    $('#main_menu').hide();
-    $('#seg_nearby').show();
-    // getSegsbyBounds();
-    showmap();
+    res = OAuth.create('strava');
+    if (res == false) {
+        $('#status_msgs').append("</br > Not connected to Strava");
+        $('#strava_login').show();
+    } else {
+        $('#main_menu').hide();
+        $('#seg_nearby').show();
+        // getSegsbyBounds();
+        showmap();
+
+    }
 }
 
 function drawTable() {
@@ -130,7 +138,7 @@ function drawTable() {
 }
 
 
-function getWeather() {
+function initBtns() {
 
 var strava_segs = {
     segs: []
@@ -181,43 +189,51 @@ var strava_deets = {
     });
 
     $('#nearby').on('click', function () {
+
         res = OAuth.create('strava');
-         //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
-          //alert('Athlete ' + data.lastname);
-        res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
-            var jsondeets = JSON.stringify(data);
-          //  localStorage.setItem('segdata', jsondeets);
-      //      alert(jsondeets);
-            //drawTable();
-            //$('#result3').html(eval('(' + strava_segs + ')'));
-
-        }).fail(function (err) {
-            //todo with err
-          //  alert("fail");
-        });
-        //res.me().done(function (me) {
-        //    alert('Hello ' + me.name);
-        //}).fail(function (err) {
-        //todo when the OAuth flow failed
-        // });
-        //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
-        //res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
-        //res.get('https://www.strava.com/api/v3/activities?id=421422146', { data: { id: 421422146} }).done(function (data) {
-        //works: res.get('https://www.strava.com/api/v3/segments/explore', { data: { bounds: '37.821362,-122.505373,37.842038,-122.465977'} }).done(function (data) {
+        if (res == false) {
+            $('#status_msgs').append("Not connected");
+        } else {
+            //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+            //alert("nb click" + res);
+            res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
+                var jsondeets = JSON.stringify(data);
+                //  localStorage.setItem('segdata', jsondeets);
+                //alert(jsondeets);
+                //drawTable();
+                //$('#result3').html(eval('(' + strava_segs + ')'));
+                $('#main_menu').hide();
+                $('#seg_nearby').show();
+                // getSegsbyBounds();
+                showmap();
+            }).fail(function (err) {
+                //todo with err
+               // alert("fail");
+               
+            });
+            //res.me().done(function (me) {
+            //    alert('Hello ' + me.name);
+            //}).fail(function (err) {
+            //todo when the OAuth flow failed
+            // });
+            //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+            //res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
+            //res.get('https://www.strava.com/api/v3/activities?id=421422146', { data: { id: 421422146} }).done(function (data) {
+            //works: res.get('https://www.strava.com/api/v3/segments/explore', { data: { bounds: '37.821362,-122.505373,37.842038,-122.465977'} }).done(function (data) {
             //https: //www.strava.com/api/v3/segments/explore
-//            result.post('/message', {
-  //              data: {
-    //                user_id: 93,
-      //              content: 'Hello Mr. 93 !'
-        //        }
-        //    })
+            //            result.post('/message', {
+            //              data: {
+            //                user_id: 93,
+            //              content: 'Hello Mr. 93 !'
+            //        }
+            //    })
 
 
-       // res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+            // res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
             //
             //todo with data
-            
-         //   var jsontext = JSON.stringify(data);
+
+            //   var jsontext = JSON.stringify(data);
             //       var midhtml = "";
             //alert(jsontext);
             //      $.each(data, function (i, seg) {
@@ -235,12 +251,12 @@ var strava_deets = {
             //   drawTable();
             //$('#result3').html(eval('(' + strava_segs + ')'));
 
-        //}).fail(function (err) {
+            //}).fail(function (err) {
             //todo with err
-         //   alert("fail2");
-       // });
-        //    r.get('').done(function (data2) {
-
+            //   alert("fail2");
+            // });
+            //    r.get('').done(function (data2) {
+        }
     });
 
 
@@ -284,9 +300,3 @@ var strava_deets = {
     });
 
    }
-
-
-
-$(document).on('deviceready', function () {
-                });
-
