@@ -124,6 +124,7 @@ function getAct() {
 }
 
 function getNearby() {
+    $('#status_msgs').hide();
     $('#get_activities').hide();
     res = OAuth.create('strava');
     if (res == false) {

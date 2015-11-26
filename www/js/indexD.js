@@ -389,7 +389,7 @@ function setMarkers(map, bounds_map, PID) {
                 "endlatlong": seg.end_latlng
             });
 
-            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\">4</span></div></li>";
+            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
             ct++;
         });
 
