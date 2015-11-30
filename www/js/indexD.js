@@ -373,7 +373,12 @@ function setMarkers(map, bounds_map, PID) {
   //  var hereLatLng = new google.maps.LatLng(latlng);
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
     res = OAuth.create('strava');
-    res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
+    var token = localStorage.getItem('st_token');
+    res = OAuth.create('strava');
+    $('#status_msgs').append("Connecting with: " + token);
+    res.get('https://www.strava.com/api/v3/segments/explore', { data: { access_token: token, bounds: bds_fmt} }).done(function (data) {
+        
+    //res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
         var jsondeets = JSON.stringify(data);
 
         $.each(data.segments, function (i, seg) {

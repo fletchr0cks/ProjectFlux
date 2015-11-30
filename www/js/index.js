@@ -124,8 +124,9 @@ function getAct() {
 }
 
 function getNearby() {
-    $('#status_msgs').hide();
+    //$('#status_msgs').hide();
     $('#get_activities').hide();
+
     res = OAuth.create('strava');
     if (res == false) {
         $('#status_msgs').append("</br > Not connected to Strava");
@@ -171,55 +172,66 @@ var strava_deets = {
 
     $('#fb-connect').on('click', function () {
         // alert('Athlet');
-        localStorage.removeItem('segdata');
-        res = OAuth.create('strava');
-        $('#status_msgs').show();
-        $('#status_msgs').html("Retrieving Activities ...");
+        if (res == false) {
+            $('#status_msgs').append("</br > Not connected to Strava");
+            $('#strava_login').show();
+            $('#main_menu').hide();
+        } else {
+            $('#main_menu').show();
+            $('#status_msgs').append("</br > Connected to Strava");
+            $('#get_activities').show();
+
+            localStorage.removeItem('segdata');
+            res = OAuth.create('strava');
+            $('#status_msgs').show();
+            $('#status_msgs').append(localStorage.getItem('segdata') + " Retrieving Activities ...");
 
 
-        //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
-        res.get('https://www.strava.com/api/v3/activities').done(function (data) {
-            //https: //www.strava.com/api/v3/activities
-            //todo with data
-            //alert('Athlete ' + data.lastname);
-            var jsontext = JSON.stringify(data);
-            var midhtml = "";
-            var ct = 0;
-            $.each(data, function (i, seg) {
-                strava_segs.segs.push({
-                    "name": data[i]['name'],
-                    "poly": data[i]['map']['summary_polyline'],
-                    "dist": data[i]['distance'],
-                    "egain": data[i]['total_elevation_gain']
+            //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
+            res.get('https://www.strava.com/api/v3/activities').done(function (data) {
+                //https: //www.strava.com/api/v3/activities
+                //todo with data
+                //alert('Athlete ' + data.lastname);
+                var jsontext = JSON.stringify(data);
+                var midhtml = "";
+                var ct = 0;
+                $.each(data, function (i, seg) {
+                    strava_segs.segs.push({
+                        "name": data[i]['name'],
+                        "poly": data[i]['map']['summary_polyline'],
+                        "dist": data[i]['distance'],
+                        "egain": data[i]['total_elevation_gain']
+                    });
+                    ct++;
+                    //     var name = data[i]['name'];
+                    // alert(name);
+                    //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
                 });
-                ct++;
-                //     var name = data[i]['name'];
-                // alert(name);
-                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+                var jsonsegs = JSON.stringify(strava_segs);
+                localStorage.setItem('segdata', jsonsegs);
+                $('#status_msgs').append("Retrieved " + ct + " Activities");
+                //drawTable();
+                //$('#result3').html(eval('(' + strava_segs + ')'));
+
+            }).fail(function (err) {
+                //todo with err
+                alert("fail");
             });
-            var jsonsegs = JSON.stringify(strava_segs);
-            localStorage.setItem('segdata', jsonsegs);
-            $('#status_msgs').html("Retrieved " + ct + " Activities");
-            //drawTable();
-            //$('#result3').html(eval('(' + strava_segs + ')'));
-
-        }).fail(function (err) {
-            //todo with err
-            alert("fail");
-        });
-        //    r.get('').done(function (data2) {
-
+            //    r.get('').done(function (data2) {
+        }
     });
 
-    $('#nearby').on('click', function () {
-
+    $('#nearby').on('click', function () { //not used
+        var token = localStorage.getItem('st_token');
         res = OAuth.create('strava');
         if (res == false) {
             $('#status_msgs').append("Not connected");
         } else {
+            alert(token);
+            $('#status_msgs').append("Connecting with: " + token);
             //res.get('https://www.strava.com/api/v3/athlete').done(function (data) {
             //alert("nb click" + res);
-            res.get('https://www.strava.com/api/v3/segments/explore?bounds=37.821362,-122.505373,37.842038,-122.465977').done(function (data) {
+            res.get('https://www.strava.com/api/v3/segments/explore', { data: { access_token: token, bounds: '37.821362,-122.505373,37.842038,-122.465977'} }).done(function (data) {
                 var jsondeets = JSON.stringify(data);
                 //  localStorage.setItem('segdata', jsondeets);
                 //alert(jsondeets);
@@ -231,8 +243,8 @@ var strava_deets = {
                 showmap();
             }).fail(function (err) {
                 //todo with err
-               // alert("fail");
-               
+                // alert("fail");
+
             });
             //res.me().done(function (me) {
             //    alert('Hello ' + me.name);
@@ -303,7 +315,7 @@ var strava_deets = {
                     });
 
     $('#st-connect').on('click', function () {
-        $('#result').html("connecting ...");
+        $('#result').html("status_msgs ...");
         //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
         OAuth.popup('strava', {cache: true}).done(function (r) {
             // the access_token is available via r.access_token
@@ -312,10 +324,11 @@ var strava_deets = {
                 .done(function (data) {
                     $('#result').html("strava: Hello");
                     $('#get_activities').show();
-                    $('#main_menu').shoq();
+                    $('#main_menu').show();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    $('#result').html("req error: " + textStatus + r.access_token);
+                    $('#status_msgs').html("req error: " + textStatus + r.access_token);
+                    localStorage.setItem('st_token', r.access_token);
                     $('#get_activities').show();
                     $('#main_menu').show();
                                    
