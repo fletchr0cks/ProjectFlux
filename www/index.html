@@ -63,6 +63,10 @@
   </li>
 </ul>
 </div>
+<button class="btn btn-positive" onclick="stConn2()">Connect</button>
+<button class="btn btn-positive" onclick="stTest2()">Test</button>
+<button class="btn btn-positive" onclick="showLocal()">Local storage</button>
+<button class="btn btn-primary" onclick="clearCache()">Clear</button>
 <div id="get_activities" style="display:none">
 <button class="btn btn-primary btn-block" id="fb-connect">Get My Activities</button>
 </div>
@@ -150,7 +154,7 @@
             app.initialize();
 
             $('#data_status').html("Loading ...");
-                checkData();
+                //checkData();
 
                 console.log("hihi");
                 

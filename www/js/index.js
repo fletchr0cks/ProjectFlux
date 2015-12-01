@@ -156,6 +156,59 @@ function drawTable() {
 
 }
 
+function stConn2() {
+    $('#status_msgs').show();
+    $('#status_msgs').append("</br > Connecting to Strava ...");
+    OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8')
+    OAuth.popup('strava', { cache: true }).done(function (result) {
+        console.log(result)
+        $('#status_msgs').append("</br > " + result);
+        result.me().done(function (data) {
+            // do something with `data`, e.g. print data.name
+            $('#status_msgs').append("</br > " + data.lastname);
+        })
+        // do some stuff with result
+    })
+
+
+}
+
+function stTest2() {
+    $('#status_msgs').show();
+    $('#status_msgs').append("</br > testing ...");
+    OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
+    OAuth.popup('strava', { cache: true }).done(function (result) {
+        result.get('https://www.strava.com/api/v3/activities').done(function (data) {
+            $('#status_msgs').append("</br > " + result);
+            var jsontext = JSON.stringify(data);
+            $('#status_msgs').append("</br > " + jsontext);
+        })
+        // do some stuff with result
+    });
+
+
+}
+
+function clearCache() {
+    $('#status_msgs').show();
+    $('#status_msgs').append("<br/> clearing ...");
+    //  OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
+    OAuth.clearCache();
+
+    showLocal();
+}
+
+function showLocal() {
+    $('#status_msgs').show();
+    for (var i = 0; i < localStorage.length; i++) {
+        $('#status_msgs').append("</br > " + localStorage.key(i));
+
+        // do something with localStorage.getItem(localStorage.key(i));
+    }
+
+    $('#status_msgs').append("</br > st: " + localStorage.getItem('oauthio_provider_strava'));
+    $('#status_msgs').append("</br > tw: " + localStorage.getItem('oauthio_provider_twitter'));
+}
 
 function initBtns() {
 
