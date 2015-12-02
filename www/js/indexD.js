@@ -238,8 +238,9 @@ $('#main_menu').show();
 }
 }
 
-function showBtns() {
-
+function showTest() {
+    $('#testBtns').show();
+    $('#actmsgs').show();
     $('#get_activities').show();
     $('#status_msgs').show();
   
@@ -372,90 +373,90 @@ function setMarkers(map, bounds_map, PID) {
     var tlng = "-2.719811";
   //  var hereLatLng = new google.maps.LatLng(latlng);
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
-    res = OAuth.create('strava');
-    var token = localStorage.getItem('st_token');
-    res = OAuth.create('strava');
-    $('#status_msgs').append("Connecting with: " + token);
-    res.get('https://www.strava.com/api/v3/segments/explore', { data: { access_token: token, bounds: bds_fmt} }).done(function (data) {
-        
-    //res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
-        var jsondeets = JSON.stringify(data);
 
-        $.each(data.segments, function (i, seg) {
-            //alert(seg.start_latlng[0]);
-            seg_loc_data.points.push({
-                "name": seg.name,
-                "lat": seg.start_latlng[0],
-                "longval": seg.start_latlng[1],
-                "PID": seg.id,
-                "points": seg.points,
-                "endlat": seg.end_latlng[0],
-                "endlongval": seg.end_latlng[1],
-                "endlatlong": seg.end_latlng
+    OAuth.popup('strava', { cache: true }).done(function (result) {
+        //result.get('https://www.strava.com/api/v3/activities').done(function (data) {
+
+        result.get('https://www.strava.com/api/v3/segments/explore', { data: { bounds: bds_fmt} }).done(function (data) {
+
+            //res.get('https://www.strava.com/api/v3/segments/explore?bounds=' + bds_fmt).done(function (data) {
+            var jsondeets = JSON.stringify(data);
+
+            $.each(data.segments, function (i, seg) {
+                //alert(seg.start_latlng[0]);
+                seg_loc_data.points.push({
+                    "name": seg.name,
+                    "lat": seg.start_latlng[0],
+                    "longval": seg.start_latlng[1],
+                    "PID": seg.id,
+                    "points": seg.points,
+                    "endlat": seg.end_latlng[0],
+                    "endlongval": seg.end_latlng[1],
+                    "endlatlong": seg.end_latlng
+                });
+
+                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
+                ct++;
             });
 
-            midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
-            ct++;
-        });
+            var jsonsegs = JSON.stringify(seg_loc_data);
+            localStorage.setItem('seg_loc_data', jsonsegs);
+            var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
+            $.each(seg_loc_data.points, function (i, markers) {
+                // console.log(json);
+                //      alert("hihi");
+                if (markers.PID == parseInt(PID)) {
+                    //   var image = 'marker_search.png';
+                    //ListComments(markers.PID);
+                    $('#place_name').html(markers.name);
+                } else if (markers.PID == 1) {
+                    //   var image = 'marker_search.png';
+                } else {
+                    //   var image = 'marker_s4.png';
+                }
+                //var infoWindow = new google.maps.InfoWindow({ content: 'Place ID' + markers.PID });
+                var siteLatLng = new google.maps.LatLng(markers.lat, markers.longval);
+                //var markerp = new google.maps.Marker({ 'position': siteLatLng, 'icon': image });
+                var markerp = new google.maps.Marker({ 'position': siteLatLng, 'map': map });
+                var endLatLng = new google.maps.LatLng(markers.endlat, markers.endlongval);
+                var endpos = "(" + markers.endlatlong + ")";
+                //     alert(endpos);
 
-        var jsonsegs = JSON.stringify(seg_loc_data);
-        localStorage.setItem('seg_loc_data', jsonsegs);
-        var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
-        $.each(seg_loc_data.points, function (i, markers) {
-            // console.log(json);
-            //      alert("hihi");
-            if (markers.PID == parseInt(PID)) {
-                //   var image = 'marker_search.png';
-                //ListComments(markers.PID);
-                $('#place_name').html(markers.name);
-            } else if (markers.PID == 1) {
-                //   var image = 'marker_search.png';
-            } else {
-                //   var image = 'marker_s4.png';
-            }
-            //var infoWindow = new google.maps.InfoWindow({ content: 'Place ID' + markers.PID });
-            var siteLatLng = new google.maps.LatLng(markers.lat, markers.longval);
-            //var markerp = new google.maps.Marker({ 'position': siteLatLng, 'icon': image });
-            var markerp = new google.maps.Marker({ 'position': siteLatLng, 'map': map });
-            var endLatLng = new google.maps.LatLng(markers.endlat, markers.endlongval);
-            var endpos = "(" + markers.endlatlong + ")";
-           //     alert(endpos);
-            
-            if (markers.name == "You are here!") {
-            } else {
-                markers_array.push(markerp);
-            }
+                if (markers.name == "You are here!") {
+                } else {
+                    markers_array.push(markerp);
+                }
 
-            //   alert(markers.points);
-            //   alert(returnpoly(markers.points));
+                //   alert(markers.points);
+                //   alert(returnpoly(markers.points));
 
-            //initMap("}g|eFnm@n@Op@VJr@");
-            google.maps.event.addListener(markerp, "click", function () {
-                //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
+                //initMap("}g|eFnm@n@Op@VJr@");
+                google.maps.event.addListener(markerp, "click", function () {
+                    //$('#map_markers').fadeOut().html("<p>Click: " + markers.name + markers.PID + "</p>").fadeIn();
 
-                //highlight table entry
-                var marker_end = new google.maps.Marker({ 'position': endLatLng, 'map': map });
-                $('#seg_' + markers.PID).addClass("list");
-                addPolyline(returnpoly(markers.points)).setMap(map);
-                //infoWindow.open(map, markerp);
+                    //highlight table entry
+                    var marker_end = new google.maps.Marker({ 'position': endLatLng, 'map': map });
+                    $('#seg_' + markers.PID).addClass("list");
+                    addPolyline(returnpoly(markers.points)).setMap(map);
+                    //infoWindow.open(map, markerp);
+                });
+
             });
 
+
+
+            $('#map_table').html(top + midhtml + "</ul>");
+            //var mcOptions = { gridSize: 50, maxZoom: 18 };
+            //var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
+
+
+
+
+        }).fail(function (err) {
+            alert("fail");
         });
 
-
-
-        $('#map_table').html(top + midhtml + "</ul>");
-        //var mcOptions = { gridSize: 50, maxZoom: 18 };
-        //var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
-
-
-
-
-    }).fail(function (err) {
-        alert("fail");
     });
-
-    
 }
 
 
@@ -505,6 +506,7 @@ function poly_map(i, name) {
 
 function poly2(i,name) {
     $('#act_table').hide();
+    $('#act_table_header').hide();
     $('#seg_data').show();
     $('#static_map').fadeIn();
     var json = localStorage.getItem('segdata');

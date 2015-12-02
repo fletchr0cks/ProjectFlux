@@ -27,17 +27,21 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function () {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener('offline', this.Offline, false);
     },
-
-
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function () {
         app.receivedEvent('deviceready');
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);   
+        checkData();
     },
+
+    Offline: function () {
+        // alert("offline");
+    },
+
     // Update DOM on a Received Event
     receivedEvent: function (id) {
         var parentElement = document.getElementById(id);
@@ -49,12 +53,10 @@ var app = {
 
         console.log('Received Event: ' + id);
 
-
     }
-
-
-
 };
+
+
 //document.addEventListener("deviceready", onDeviceReady, false);
 
 // device APIs are available
@@ -89,88 +91,107 @@ function checkData() {
     if (localStorage.getItem("segdata") === null) {
     $('#status_msgs').append("no data");
     //$('#settings').show();
-        initBtns();
+       // initBtns();
     } else {
         //alert("data");
         var data = localStorage.getItem("segdata");
         $('#status_msgs').append("data </br> " + data);
         //$('#settings').hide();
         initBtns();
-
+        drawTable();
     }
 
-    res = OAuth.create('strava');
-    if (res == false) {
-        $('#status_msgs').append("</br > Not connected to Strava");
-        $('#strava_login').show();
-        $('#main_menu').hide();
+
+    if (localStorage.getItem('oauthio_provider_strava') === null) {
+        $('#footerMsgS').html("Not Authenticated with Strava. Tap 'Connect to Strava'");
+        $('#UnAuthApp').show();
+
     } else {
-        $('#main_menu').show();
-        $('#status_msgs').append("</br > Connected to Strava");
+        $('#AuthApp').show();
+        var userdata = localStorage.getItem('userdata');
+        var user = eval('(' + userdata + ')');
+        var name = user.deets[0]['firstname'] + " " + user.deets[0]['lastname'];
+        $('#status_msgs').hide();
+        $('#status_msgs').append(userdata);
+      //  var name = 
+        $('#footerMsgS').html("Authenticated with Strava as " + name);
         $('#get_activities').show();
     }
 
-    getW();
+   // getW();
 
 
 
 }
 
 function getAct() {
-    $('#main_menu').hide();
-    $('#get_activities').hide();
+    $('#seg_nearby').hide();
     $('#status_msgs').hide();
     drawTable();
 }
 
 function getNearby() {
-    //$('#status_msgs').hide();
-    $('#get_activities').hide();
-
-    res = OAuth.create('strava');
-    if (res == false) {
-        $('#status_msgs').append("</br > Not connected to Strava");
-        $('#strava_login').show();
-    } else {
-        $('#main_menu').hide();
-        $('#seg_nearby').show();
+    $('#act_table_header').hide();
+    $('#act_table').hide();
+    $('#seg_nearby').show();
+    $('#seg_data').hide();
         // getSegsbyBounds();
         showmap();
 
-    }
+    
 }
 
 function drawTable() {
+    $('#act_table_header').show();
     $('#act_table').show();
+    $('#seg_data').hide();
     var top = "<ul class=\"table-view\">";
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
     var midhtml = "";
+    var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
         midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.dist + ")<span class=\"badge\">4</span></li>";
-       // alert("i=" + i + "   " + seg.poly);
+        // alert("i=" + i + "   " + seg.poly);
+        act_ct++;
     });
-    //alert(midhtml);
-
+   // alert(midhtml);
+    var ref_btn = "<div class=\"minihead\"><button class=\"btn btn-primary\" onclick=\"stAct()\">Refresh My Activities</button></div>";
+    $('#actMsgs').html(act_ct + " Activities loaded.");
     $('#act_table').html(top + midhtml + "</ul>");
-
 }
 
 function stConn2() {
+    var strava_deets = {
+    deets:[]        
+    };
     $('#status_msgs').show();
     $('#status_msgs').append("</br > Connecting to Strava ...");
     OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8')
     OAuth.popup('strava', { cache: true }).done(function (result) {
         console.log(result)
-        $('#status_msgs').append("</br > " + result);
+        $('#status_msgs').append("</br > " + JSON.stringify(result));
+        localStorage.removeItem('userdata');
         result.me().done(function (data) {
             // do something with `data`, e.g. print data.name
+            
+            strava_deets.deets.push({
+                "firstname": data.firstname,
+                "lastname": data.lastname
+
+
+            });
+            var jsondeets = JSON.stringify(strava_deets);
+            localStorage.setItem('userdata', jsondeets);
+            
             $('#status_msgs').append("</br > " + data.lastname);
-        })
-        // do some stuff with result
-    })
+            $('#AuthApp').show();
+            $('#UnAuthApp').hide();
+            getAct();
+            // do some stuff with result
+        });
 
-
+    });
 }
 
 function stTest2() {
@@ -189,6 +210,43 @@ function stTest2() {
 
 }
 
+function stAct() {
+    var strava_segs = {
+        segs: []
+    };
+    //$('#status_msgs').show();
+    $('#actMsgs').html("Refreshing Activities from Strava..."); //was actmsgs
+    OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
+   
+    OAuth.popup('strava', { cache: true }).done(function (result) {
+        result.get('https://www.strava.com/api/v3/activities').done(function (data) {
+
+            localStorage.removeItem('segdata');
+            var jsontext = JSON.stringify(data);
+            $('#status_msgs').append(jsontext);
+            var ct = 0;
+            $.each(data, function (i, seg) {
+                strava_segs.segs.push({
+                    "name": data[i]['name'],
+                    "poly": data[i]['map']['summary_polyline'],
+                    "dist": data[i]['distance'],
+                    "egain": data[i]['total_elevation_gain']
+                });
+                ct++;
+                //     var name = data[i]['name'];
+                // alert(name);
+                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+            });
+            var jsonsegs = JSON.stringify(strava_segs);
+            localStorage.setItem('segdata', jsonsegs);
+            $('#actMsgs').append("Retrieved " + ct + " Activities.");
+            //drawTable();
+
+        });
+
+    });
+}
+
 function clearCache() {
     $('#status_msgs').show();
     $('#status_msgs').append("<br/> clearing ...");
@@ -205,9 +263,16 @@ function showLocal() {
 
         // do something with localStorage.getItem(localStorage.key(i));
     }
+   // var straval = localStorage.getItem('oauthio_provider_strava');
+   // var stravl2 = straval.replace('1448', '1555');
 
     $('#status_msgs').append("</br > st: " + localStorage.getItem('oauthio_provider_strava'));
     $('#status_msgs').append("</br > tw: " + localStorage.getItem('oauthio_provider_twitter'));
+
+//    $('#status_msgs').append("</br > st2: " + stravl2);
+//    localStorage.removeItem('oauthio_provider_strava');
+//    localStorage.setItem('oauthio_provider_strava', stravl2);
+//    $('#status_msgs').append("</br > st3: " + localStorage.getItem('oauthio_provider_strava'));
 }
 
 function initBtns() {
@@ -223,7 +288,7 @@ var strava_deets = {
 
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
 
-    $('#fb-connect').on('click', function () {
+    $('#fb-connect').on('click', function () {  //used for get activities
         // alert('Athlet');
         if (res == false) {
             $('#status_msgs').append("</br > Not connected to Strava");

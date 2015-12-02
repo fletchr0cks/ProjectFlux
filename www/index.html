@@ -34,53 +34,57 @@
         <title>Hello World</title>
     </head>
     <body>
-      
-
-      <header class="bar bar-nav">
-  <a class="icon icon-left-nav pull-left" onclick="back()"></a>
-  <a class="icon icon-compose pull-right" onclick="showBtns()"></a>
-  <h1 class="title">Strava Guru</h1>
-</header>
-     <div class="bar bar-footer">
-      <a class="icon icon-compose pull-right" href="#composeModal"></a>
-      <small class="updated-text"><div id="footer_msg">Updated just now</div></small>
+   
+    <div id="UnAuthApp" style="display:none">
+<button class="btn btn-positive btn-block" onclick="stConn2()">Connect to Strava</button>
+<div class="bar bar-footer">
+      <a class="icon icon-gear pull-right" href="#composeModal" onclick="showTest()"></a>
+      <small class="updated-text">Not authenticated with Strava</div>
+      </small>
     </div>
 
-    <div class="content">
-    <div id="main_menu">
-    <ul class="table-view">
-  <li class="table-view-cell">
-    <a class="navigate-right"  onclick="getAct()">
-     
-      My Activities
-    </a>
-  </li>
-  <li class="table-view-cell">
-    <a class="navigate-right" onclick="getNearby()" id="nearbyxx">
-   
-      Segments Nearby
-    </a>
-  </li>
-</ul>
 </div>
+<div id="AuthApp" style="display:none">
+    <header class="bar bar-nav">
+   <div class="segmented-control">
+    <a class="control-item active" onclick="getAct()">My Activities</a>
+    <a class="control-item" onclick="getNearby()">Nearby</a>
+  </div>
+</header>
+     <div class="bar bar-footer">
+      <a class="icon icon-gear pull-right" href="#composeModal" onclick="showTest()"></a>
+      <small class="updated-text"><div id="footer_msg">Location message</div>
+      <div id="footerMsgS">Strava message</div>
+      </small>
+    </div>
+
+<div class="content">
+
+<div id="testBtns" style="display:none">
 <button class="btn btn-positive" onclick="stConn2()">Connect</button>
-<button class="btn btn-positive" onclick="stTest2()">Test</button>
+<button class="btn btn-positive" onclick="stAct()">Refresh</button>
 <button class="btn btn-positive" onclick="showLocal()">Local storage</button>
 <button class="btn btn-primary" onclick="clearCache()">Clear</button>
-<div id="get_activities" style="display:none">
-<button class="btn btn-primary btn-block" id="fb-connect">Get My Activities</button>
 </div>
-<div id="strava_login" style="display:none">
-<button class="btn btn-positive btn-block" id="st-connect">Connect to Strava</button>
-</div>
+
+
 
 <div id="status_msgs" style="display:none"></div>
  <div id="seg_nearby" style="display:none">
  	<div id="map_canvas_nearby" style="height:150px;"></div>
     <div id="map_table"></div>
  </div>
-
- <div id="act_table" style="display:none"></div>
+<div id="act_table_header">
+<table style="width:100%">
+<tr>
+<td align="left">
+<div class="minihead" id="actMsgs">msg</div>
+</td>
+<td align="right">
+<div class="minihead" id="actBtn"><button class="btn btn-primary" onclick="stAct()">Refresh My Activities</button></div>
+</td></tr></table>
+</div>
+<div id="act_table" style="display:none"></div>
    
 <div id="seg_data" style="display:none">
 <div class="divhead" id="title"></div>
@@ -136,6 +140,7 @@
 <p id="result3">res3 here</p>
 <p id="result">hihi</p>
 <p id="data_status">weather</p>
+</div>
 </div>
 </div>
 </div>
