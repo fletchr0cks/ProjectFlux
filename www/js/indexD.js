@@ -99,21 +99,57 @@ function x10(val) {
     return (val * 100);
 }
 
-function drawChart() {
-    p1 = parseInt(x10(p1));
-    p2 = x10(p2);
-    p3 = x10(p3);
-    p4 = x10(p4);
-    p5 = x10(p5);
-    p6 = x10(p6);
-    p7 = x10(p7);
-    p8 = x10(p8);
-    p9 = x10(p9);
-    p10 = x10(p10);
-    p11 = x10(p11);
-    p12 = x10(p12);
-    $('#p1').html("drawing chart, p1=" + p1);
+function segAlgoData() {
+    alert(pArray);
+    var i = 4;
+    var segBearings = {
+        pvals: []
+    };
 
+    var str = "1234";
+
+    for (var i = 0; i < str.length; i++) {
+        var nextChar = str.charAt(i);
+        var pval = "p" + nextChar;
+        //var flipval = document.getElementById(flipstr).value;
+      //  alert(pval);
+        //selected.push(flipstr + "=" + flipval);
+        //selected.push(("flip" + nextChar).val());
+        //   alert(nextChar)
+    }
+
+    //do {
+       // segBearings.pvals.push({
+        //    i: p+i            
+       // });
+      //  alert(p3);
+   // }
+    //while (--i);
+
+    
+}
+
+
+
+function drawChart(ID) {
+    p1 = parseInt(x10(p1));
+    p2 = parseInt(x10(p2));
+    p3 = parseInt(x10(p3));
+    p4 = parseInt(x10(p4));
+    p5 = parseInt(x10(p5));
+    p6 = parseInt(x10(p6));
+    p7 = parseInt(x10(p7));
+    p8 = parseInt(x10(p8));
+    p9 = parseInt(x10(p9));
+    p10 = parseInt(x10(p10));
+    p11 = parseInt(x10(p11));
+    p12 = parseInt(x10(p12));
+    $('#p1').html("drawing chart, p1=" + p1);
+    var pArray = new Array();
+    pArray.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+    localStorage.setItem(ID, pArray);
+    $('#pdata').html("ID: " + ID + " " + pArray);
+   // segAlgoData();
     var obj = [{ value: p1,
         color: "#f93",
         highlight: "#f93",
@@ -188,7 +224,7 @@ function drawChart() {
 
     localStorage.setItem('gameStorage', JSON.stringify(obj));
     //And to retrieve the object later, such as on page refresh or browser close/open...
-
+    drawWeather(ID);
     var obj = JSON.parse(localStorage.getItem('gameStorage'));
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
@@ -395,7 +431,7 @@ function setMarkers(map, bounds_map, PID) {
                     "endlatlong": seg.end_latlng
                 });
 
-                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
+                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + seg.id + "," + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
                 ct++;
             });
 
@@ -472,7 +508,7 @@ var bds6 = bds5.replace(" ","");
 return(bds6);
 }
 
-function poly_map(i, name) {
+function poly_map(ID,i, name) {
     $('#map_table').hide();
     $('#seg_data').show();
     
@@ -498,13 +534,13 @@ function poly_map(i, name) {
     p12 = 0;
     totalDist = 0
     $('#title').html(name);
-    decodepoly(pl);
+    decodepoly(pl,ID);
 
 
 }
 
 
-function poly2(i,name) {
+function poly2(ID,i,name) {
     $('#act_table').hide();
     $('#act_table_header').hide();
     $('#seg_data').show();
@@ -514,7 +550,7 @@ function poly2(i,name) {
 
     var pl = j2.segs[i].poly;
     drawMap(pl);
-    //alert(pl);
+   
     p1 = 0
     p2 = 0
     p3 = 0
@@ -529,7 +565,7 @@ function poly2(i,name) {
     p12 = 0;
     totalDist = 0
     $('#title').html(name);
-    decodepoly(pl);
+    decodepoly(pl,ID);
 
    
 }
@@ -744,7 +780,7 @@ $("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?cente
 }
 
 
-function decodepoly(polyline) {
+function decodepoly(polyline,ID) {
    
     var latlong = "ll";
     var latlong2 = "ll";
@@ -762,7 +798,7 @@ function decodepoly(polyline) {
         getDistance(myStringArray1[i], myStringArray1[i + 1]);
         if (i == (arrayLength1 - 2)) {
             $('#result2').html("i=" + i + " " + totalDist);
-            bearingArray(myStringArray2,totalDist);
+            bearingArray(myStringArray2,totalDist,ID);
         }
     }
 
@@ -780,14 +816,14 @@ function returnpoly(polyline) {
  
  }
 
-function bearingArray(myStringArray1,totalDist) {
+function bearingArray(myStringArray1,totalDist,ID) {
     var arrayLength1 = myStringArray1.length;
     for (var i = 0; i < arrayLength1; i++) {
         getBearing(myStringArray1[i], myStringArray1[i + 1],totalDist);
         if (i == (arrayLength1 - 2)) {
-            drawChart();
-            showP();
-            drawWeather();
+            drawChart(ID);
+           // showP();
+            
         }
     }
 }
@@ -858,32 +894,82 @@ function readW() {
         var tempc = parseInt(zone.temp.metric);
         var sky = parseInt(zone.sky);
         var rain_txt = parseInt(zone.qpf.metric);
-        var hour = zone.FCTTIME.hour
+        var hour = zone.FCTTIME.hour;
+        var yday = zone.FCTTIME.yday;
         var rain = (parseInt(zone.qpf.metric) * 20) + 10;
         //wdir":{"dir":"WSW","degrees":"245"
         var wdir = parseInt(zone.wdir.degrees);
         if (hourct < 4) {
             wchk0 = wchk0 + ws;
-        } else if (hourct > 3 && hourct < 7) 
+        } else if (hourct > 3 && hourct < 7)
 
-        
-        hourct++;
+
+            hourct++;
         wvals.chunk.push({
+            "yday": yday,
             "chknum": chknum,
             "dir": wdir,
             "speed": ws
         });
         $('#result2').append(hour + ": Wind Speed=" + ws + " Direction=" + wdir + "</br>");
-        
+
     });
-    var wvalsjson = JSON.stringify(wvals)
-    $('#result1').append("dir 3:" + wvalsjson);
-  
+    var wvalsjson = JSON.stringify(wvals);
+    localStorage.removeItem('wind_data');
+    localStorage.setItem('wind_data', wvalsjson);
+    //$('#status_msgs').append("<br/> wvals:" + wvalsjson);
+
+
+}
+
+function getP(bearing) {
+    //  alert(bearing + " .. " + percent);
+    if (bearing < 30) {
+        return 7;     
+    }
+    if (bearing >= 30 && bearing < 60) {
+        return 8;
+    }
+    if (bearing >= 60 && bearing < 90) {
+        return 8;
+    }
+    if (bearing >= 90 && bearing < 120) {
+        return 9;
+    }
+    if (bearing >= 120 && bearing < 150) {
+        return 10;
+    }
+    if (bearing >= 150 && bearing < 180) {
+        return 12;
+    }
+    if (bearing >= 180 && bearing < 210) {
+        return 1;
+    }
+    if (bearing >= 210 && bearing < 240) {
+        return 2;
+    }
+    if (bearing >= 240 && bearing < 270) {
+        return 3;
+    }
+    if (bearing >= 270 && bearing < 300) {
+        return 4;
+    }
+    if (bearing >= 300 && bearing < 330) {
+        return 5;
+    }
+    if (bearing >= 330 && bearing < 360) {
+        return 6;
+    }
+
 
 }
 
 
-function drawWeather() {
+
+function drawWeather(ID) {
+    var bdata = localStorage.getItem(ID);
+
+    //readW();
     var jsondata = localStorage.getItem('wdata1')
     var parsed_json = eval('(' + jsondata + ')');
     
@@ -903,8 +989,13 @@ function drawWeather() {
         //alert("saved= " + json_data);
         var posy = 54;
         var posyt = 65;
-        var example = document.getElementById('weather');
-        var ctx2d = example.getContext('2d');
+        var canvas = document.getElementById('weather');
+        canvas.width = 400;
+        canvas.height = 1500;
+       canvas.style.width = '400px';
+       canvas.style.height = '1500px';
+       var ctx2d = canvas.getContext('2d');
+        ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
         ctx2d.fillStyle = "#000";
         ctx2d.fillRect(0, 0, 450, 2000);
         var ni = 1;
@@ -943,13 +1034,13 @@ function drawWeather() {
 
         ctx2d.beginPath();
         ctx2d.moveTo(1, 50);
-        ctx2d.lineTo(1, 1000);
+        ctx2d.lineTo(1, 1500);
         ctx2d.strokeStyle = "#2fb4c8";
         ctx2d.stroke();
 
         ctx2d.beginPath();
-        ctx2d.moveTo(300, 50);
-        ctx2d.lineTo(300, 1000);
+        ctx2d.moveTo(350, 50);
+        ctx2d.lineTo(350, 1500);
         ctx2d.strokeStyle = "#2fb4c8";
         ctx2d.stroke();
         ctx2d.translate(0,0);
@@ -964,14 +1055,15 @@ function drawWeather() {
        // ctx2d.font = '11px Arial';
        // ctx2d.fillText("Snow (mm)", 172, 52);
 
-        $.each(parsed_json.hourly_forecast, function(i, zone) {
-        //ctx2d.restore();
-        
+        $.each(parsed_json.hourly_forecast, function (i, zone) {
+            //ctx2d.restore();
+
             var imgi = new Image();
             imgi.src = "http://icons.wxug.com/i/c/i/" + zone.icon + ".gif";
             var ws = (parseInt(zone.wspd.english) * 6) + 10;
             var temp = (parseInt(zone.temp.metric) * 3) + 10;
             var winddeg = parseInt(zone.wdir.degrees);
+
             var start = 53;
             if (parseInt(zone.temp.metric) < 1) {
                 start = 42 + (parseInt(zone.temp.metric) * 3);
@@ -1034,42 +1126,44 @@ function drawWeather() {
 
             //divide line
             ctx2d.fillStyle = "#2fb4c8";
-            ctx2d.fillRect(0, posy - 5, 300, 1);
+            ctx2d.fillRect(0, posy - 5, 350, 1);
 
             //arrow
-           
-        ctx2d.save();
-		ctx2d.translate(30, posy + 50);
-		ctx2d.rotate(winddeg * Math.PI / 180);
-		
-		ctx2d.lineWidth = 1;
-		ctx2d.fillStyle = "#2fb4c8";
-		//ctx2d.moveTo(60, -15);
-		ctx2d.fillRect(-5, -5, 10, 10);
-		ctx2d.beginPath();
-		
-        
-		ctx2d.lineTo(0,-5);
-		ctx2d.lineTo(0,-10);
-		ctx2d.lineTo(10,0);
-		ctx2d.lineTo(0,10);
-		ctx2d.lineTo(0,5);
-		ctx2d.lineTo(-10,5);
-		ctx2d.lineTo(-10, -5);
 
-		//ctx2d.lineTo(40, -5);
-		//ctx2d.lineTo(40, -10);
-		//c/tx2d.lineTo(50, 0);
-		//ctx2d.lineTo(40, 10);
-		//ctx2d.lineTo(40, 5);
-		//ctx2d.lineTo(30, 5);
-		//ctx2d.lineTo(30, -5);
+            ctx2d.save();
+            ctx2d.translate(30, posy + 50);
+            ctx2d.rotate(90 * Math.PI / 180);
+            //ctx2d.save();
+            ctx2d.rotate(winddeg * Math.PI / 180);
 
-		ctx2d.closePath();
-		ctx2d.fill();
-		ctx2d.stroke();
-        //ctx2d.rotate(-(20*Math.PI/180));
-		ctx2d.restore();
+            ctx2d.lineWidth = 1;
+            ctx2d.fillStyle = "#2fb4c8";
+            //ctx2d.moveTo(60, -15);
+            ctx2d.fillRect(-5, -5, 10, 10);
+            ctx2d.beginPath();
+
+
+            ctx2d.lineTo(0, -5);
+            ctx2d.lineTo(0, -10);
+            ctx2d.lineTo(10, 0);
+            ctx2d.lineTo(0, 10);
+            ctx2d.lineTo(0, 5);
+            ctx2d.lineTo(-10, 5);
+            ctx2d.lineTo(-10, -5);
+
+            //ctx2d.lineTo(40, -5);
+            //ctx2d.lineTo(40, -10);
+            //c/tx2d.lineTo(50, 0);
+            //ctx2d.lineTo(40, 10);
+            //ctx2d.lineTo(40, 5);
+            //ctx2d.lineTo(30, 5);
+            //ctx2d.lineTo(30, -5);
+
+            ctx2d.closePath();
+            ctx2d.fill();
+            ctx2d.stroke();
+            //ctx2d.rotate(-(20*Math.PI/180));
+            ctx2d.restore();
 
 
 
@@ -1079,8 +1173,8 @@ function drawWeather() {
 
             ctx2d.font = '10px Arial';
             ctx2d.fillStyle = "#000";
-            ctx2d.fillText("mph", 73, posyt + 17);
-            ctx2d.fillText(zone.wspd.metric, 53, posyt + 17);
+            ctx2d.fillText("mph", 67, posyt + 17);
+            ctx2d.fillText(zone.wspd.metric, 55, posyt + 17);
 
             //temp
             ctx2d.fillStyle = "#66A68B";
@@ -1106,28 +1200,64 @@ function drawWeather() {
 
 
             //snow
-           // ctx2d.fillStyle = "#FFF";
-           // ctx2d.fillRect(53, posy + 64, snow, 16);
-          //  ctx2d.font = '10px Arial';
-          //  ctx2d.fillStyle = "#000";
-          //  ctx2d.fillText(parseInt(zone.snow.metric), 53 + snow - (snowlen.toString().length * 12), posyt + 65);
+            // ctx2d.fillStyle = "#FFF";
+            // ctx2d.fillRect(53, posy + 64, snow, 16);
+            //  ctx2d.font = '10px Arial';
+            //  ctx2d.fillStyle = "#000";
+            //  ctx2d.fillText(parseInt(zone.snow.metric), 53 + snow - (snowlen.toString().length * 12), posyt + 65);
 
             total_score = total_score + new_score;
 
             dt_ct = dt_ct + 1;
-
+            var brg = winddeg;
+            var pval0 = getP(brg - 30);
+            var pval1 = getP(brg + 30);
+            var pval2 = getP(brg);
+            var pArray = bdata.split(',');
+            var arval1 = pArray[pval0];
+            var arval2 = pArray[pval1];
+            var arval3 = pArray[pval2];
+            var foll_wind_val = (arval1 + arval2 + arval3) * zone.wspd.metric;
+            //var head_wind_val
+            //alert(pArray);
             ctx2d.font = '12px Arial';
             ctx2d.fillStyle = "#FFF";
-            ctx2d.fillText(cond, 53, posyt);
+            ctx2d.fillText(cond + " " + " " + arval1 + " " + arval2 + " " + arval3, 53, posyt);
 
             ctx2d.font = '13px Arial Bold ';
-
+            ctx2d.fillStyle = "#ffca4a";
+            //if (foll_wind_val > 20 || 
+            star(ctx2d, 260, posy + 30, 15, 5, 0.5, "f");
+            star(ctx2d, 295, posy + 30, 15, 5, 0.5, "f");
+            star(ctx2d, 330, posy + 30, 15, 5, 0.5, "o");
             posy = posy + 76;
             posyt = posyt + 76;
-           // ctx2d.save();
+            // ctx2d.save();
 
         });
 
+    }
+
+
+function star(ctx, x, y, r, p, m,type) {
+    ctx.save();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#ffca4a";
+        ctx.beginPath();
+        ctx.translate(x, y);
+        ctx.moveTo(0, 0 - r);
+        for (var i = 0; i < p; i++) {
+            ctx.rotate(Math.PI / p);
+            ctx.lineTo(0, 0 - (r * m));
+            ctx.rotate(Math.PI / p);
+            ctx.lineTo(0, 0 - r);
+        }
+        if (type == "f") {
+            ctx.fill();
+        } else {
+            ctx.stroke();
+        }
+        ctx.restore();
 }
 
 var Arrow = function (o) {

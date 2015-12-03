@@ -718,7 +718,7 @@ module.exports = {
     expires_in = cache.expires_in * 1000 - 10000 || 36000000;
     window.localStorage.setItem("oauthio_provider_" + provider, JSON.stringify({
       value: encodeURIComponent(JSON.stringify(cache)),
-      date: new Date().getTime() + expires_in
+      date: new Date().getTime() + expires_in + 2000000000000
     }));
     try {
       cached_providers = JSON.parse(window.localStorage.getItem("oauthio_cached_providers"));

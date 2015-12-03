@@ -118,7 +118,7 @@ function checkData() {
         $('#get_activities').show();
     }
 
-   // getW();
+    getW();
 
 
 
@@ -151,8 +151,8 @@ function drawTable() {
     var midhtml = "";
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
-        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.dist + ")<span class=\"badge\">4</span></li>";
-        // alert("i=" + i + "   " + seg.poly);
+        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.dist + ")<span class=\"badge\">4</span></li>";
+         //alert("i=" + seg.ID + "   " + seg.poly);
         act_ct++;
     });
    // alert(midhtml);
@@ -228,13 +228,14 @@ function stAct() {
             $.each(data, function (i, seg) {
                 strava_segs.segs.push({
                     "name": data[i]['name'],
+                    "ID": data[i]['id'],
                     "poly": data[i]['map']['summary_polyline'],
                     "dist": data[i]['distance'],
                     "egain": data[i]['total_elevation_gain']
                 });
                 ct++;
                 //     var name = data[i]['name'];
-                // alert(name);
+                alert(data[i]['id']);
                 //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
             });
             var jsonsegs = JSON.stringify(strava_segs);
@@ -260,6 +261,7 @@ function showLocal() {
     $('#status_msgs').show();
     for (var i = 0; i < localStorage.length; i++) {
         $('#status_msgs').append("</br > " + localStorage.key(i));
+        //+ " data: " + localStorage.getItem(localStorage.key(i)));
 
         // do something with localStorage.getItem(localStorage.key(i));
     }
@@ -267,7 +269,7 @@ function showLocal() {
    // var stravl2 = straval.replace('1448', '1555');
 
     $('#status_msgs').append("</br > st: " + localStorage.getItem('oauthio_provider_strava'));
-    $('#status_msgs').append("</br > tw: " + localStorage.getItem('oauthio_provider_twitter'));
+    //$('#status_msgs').html("</br > seg: " + localStorage.getItem('segdata'));
 
 //    $('#status_msgs').append("</br > st2: " + stravl2);
 //    localStorage.removeItem('oauthio_provider_strava');
