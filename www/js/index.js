@@ -1,21 +1,21 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 var app = {
     // Application Constructor
     initialize: function () {
@@ -35,7 +35,10 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function () {
         app.receivedEvent('deviceready');
+        alert("ready");
+        $.getScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog&sensor=false');
         checkData();
+        $('#act_table').show();
     },
 
     Offline: function () {
@@ -62,7 +65,7 @@ var app = {
 // device APIs are available
 //
 //function onDeviceReady() {
-    
+
 //}
 
 // onSuccess Geolocation
@@ -87,13 +90,14 @@ function onError(error) {
 }
 
 function checkData() {
-    
+
     if (localStorage.getItem("segdata") === null) {
-    $('#status_msgs').append("no data");
-    //$('#settings').show();
-       // initBtns();
+        $('#status_msgs').append("no data");
+        $('#UnAuthApp').show();
+        // initBtns();
+       // alert("no data");
     } else {
-        //alert("data");
+       // alert("data");
         var data = localStorage.getItem("segdata");
         $('#status_msgs').append("data </br> " + data);
         //$('#settings').hide();
@@ -113,7 +117,7 @@ function checkData() {
         var name = user.deets[0]['firstname'] + " " + user.deets[0]['lastname'];
         $('#status_msgs').hide();
         $('#status_msgs').append(userdata);
-      //  var name = 
+        //  var name = 
         $('#footerMsgS').html("Authenticated with Strava as " + name);
         $('#get_activities').show();
     }
@@ -135,35 +139,39 @@ function getNearby() {
     $('#act_table').hide();
     $('#seg_nearby').show();
     $('#seg_data').hide();
-        // getSegsbyBounds();
-        showmap();
+    // getSegsbyBounds();
+    showmap();
 
-    
+
 }
 
 function drawTable() {
     $('#act_table_header').show();
-    $('#act_table').show();
+    $//('#act_table').show();
+    $('#my_activities').show();
     $('#seg_data').hide();
-    var top = "<ul class=\"table-view\">";
+    $('#seg_weather').hide();
+    $('#seg_details').hide();
+    var top = "<div class=\"framemail\"><div class=\"window\"><ul class=\"mail\">";
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
     var midhtml = "";
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
-        midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\">" + seg.name + " (" + seg.dist + ")<span class=\"badge\">4</span></li>";
-         //alert("i=" + seg.ID + "   " + seg.poly);
+        midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "</p>" +
+        "<div class=\"actions\"><a><img src=\"img/star.jpg\"></a></div></li>";
+        //alert("i=" + seg.ID + "   " + seg.poly);
         act_ct++;
     });
-   // alert(midhtml);
+    // alert(midhtml);
     var ref_btn = "<div class=\"minihead\"><button class=\"btn btn-primary\" onclick=\"stAct()\">Refresh My Activities</button></div>";
     $('#actMsgs').html(act_ct + " Activities loaded.");
-    $('#act_table').html(top + midhtml + "</ul>");
+    $('#act_table').html(top + midhtml + "</ul></div></div>");
 }
 
 function stConn2() {
     var strava_deets = {
-    deets:[]        
+        deets: []
     };
     $('#status_msgs').show();
     $('#status_msgs').append("</br > Connecting to Strava ...");
@@ -174,7 +182,7 @@ function stConn2() {
         localStorage.removeItem('userdata');
         result.me().done(function (data) {
             // do something with `data`, e.g. print data.name
-            
+
             strava_deets.deets.push({
                 "firstname": data.firstname,
                 "lastname": data.lastname
@@ -183,7 +191,7 @@ function stConn2() {
             });
             var jsondeets = JSON.stringify(strava_deets);
             localStorage.setItem('userdata', jsondeets);
-            
+
             $('#status_msgs').append("</br > " + data.lastname);
             $('#AuthApp').show();
             $('#UnAuthApp').hide();
@@ -217,7 +225,7 @@ function stAct() {
     //$('#status_msgs').show();
     $('#actMsgs').html("Refreshing Activities from Strava..."); //was actmsgs
     OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
-   
+
     OAuth.popup('strava', { cache: true }).done(function (result) {
         result.get('https://www.strava.com/api/v3/activities').done(function (data) {
 
@@ -265,28 +273,28 @@ function showLocal() {
 
         // do something with localStorage.getItem(localStorage.key(i));
     }
-   // var straval = localStorage.getItem('oauthio_provider_strava');
-   // var stravl2 = straval.replace('1448', '1555');
+    // var straval = localStorage.getItem('oauthio_provider_strava');
+    // var stravl2 = straval.replace('1448', '1555');
 
     $('#status_msgs').append("</br > st: " + localStorage.getItem('oauthio_provider_strava'));
     //$('#status_msgs').html("</br > seg: " + localStorage.getItem('segdata'));
 
-//    $('#status_msgs').append("</br > st2: " + stravl2);
-//    localStorage.removeItem('oauthio_provider_strava');
-//    localStorage.setItem('oauthio_provider_strava', stravl2);
-//    $('#status_msgs').append("</br > st3: " + localStorage.getItem('oauthio_provider_strava'));
+    //    $('#status_msgs').append("</br > st2: " + stravl2);
+    //    localStorage.removeItem('oauthio_provider_strava');
+    //    localStorage.setItem('oauthio_provider_strava', stravl2);
+    //    $('#status_msgs').append("</br > st3: " + localStorage.getItem('oauthio_provider_strava'));
 }
 
 function initBtns() {
 
-var strava_segs = {
-    segs: []
-};
+    var strava_segs = {
+        segs: []
+    };
 
 
-var strava_deets = {
-    deets: []
-};
+    var strava_deets = {
+        deets: []
+    };
 
     OAuth.initialize("7ZbKkdtjRFA8NVkn00ka1ixaIe8");
 
@@ -432,12 +440,12 @@ var strava_deets = {
                         .fail(function (e) {
                             $('#result').html('error: ' + e.message);
                         });
-                    });
+    });
 
     $('#st-connect').on('click', function () {
         $('#result').html("status_msgs ...");
         //OAuth.popup('twitter', {cache: true}).done(function(twitter) {
-        OAuth.popup('strava', {cache: true}).done(function (r) {
+        OAuth.popup('strava', { cache: true }).done(function (r) {
             // the access_token is available via r.access_token
             // but the http functions automagically wrap the jquery calls
             r.get('/oauth/authorize')
@@ -451,7 +459,7 @@ var strava_deets = {
                     localStorage.setItem('st_token', r.access_token);
                     $('#get_activities').show();
                     $('#main_menu').show();
-                                   
+
                 });
         })
         .fail(function (e) {
@@ -459,4 +467,4 @@ var strava_deets = {
         });
     });
 
-   }
+}
