@@ -930,22 +930,26 @@ function readW() {
 
 }
 
-function getP(bearing) {
+function getP_foll(bearing) {
     //  alert(bearing + " .. " + percent);
-    if (bearing < 30) {
+  //  $('#bdata').append("folB: " + bearing + "</br>");
+    if (bearing > 360) {
+        bearing = bearing - 360;
+    }  
+    if (bearing < 30 || bearing == 360) {
         return 7;
     }
     if (bearing >= 30 && bearing < 60) {
         return 8;
     }
     if (bearing >= 60 && bearing < 90) {
-        return 8;
-    }
-    if (bearing >= 90 && bearing < 120) {
         return 9;
     }
-    if (bearing >= 120 && bearing < 150) {
+    if (bearing >= 90 && bearing < 120) {
         return 10;
+    }
+    if (bearing >= 120 && bearing < 150) {
+        return 11;
     }
     if (bearing >= 150 && bearing < 180) {
         return 12;
@@ -972,7 +976,93 @@ function getP(bearing) {
 
 }
 
+function getP_head(bearing) {
+    //  alert(bearing + " .. " + percent);
+  //  $('#bdata').append("headB: " + bearing + "</br>");
+    if (bearing > 360) {
+        bearing = bearing - 360;
+    }
 
+    if (bearing <= -1) {
+        return 1;
+    }
+    else if (bearing < 30 || bearing == 360) {
+        return 1;
+    }
+    else if (bearing >= 30 && bearing < 60) {
+        return 2;
+    }
+    else if (bearing >= 60 && bearing < 90) {
+        return 3;
+    }
+    else if (bearing >= 90 && bearing < 120) {
+        return 4;
+    }
+    else if (bearing >= 120 && bearing < 150) {
+        return 5;
+    }
+    else if (bearing >= 150 && bearing < 180) {
+        return 6;
+    }
+    else if (bearing >= 180 && bearing < 210) {
+        return 7;
+    }
+    else if (bearing >= 210 && bearing < 240) {
+        return 8;
+    }
+    else if (bearing >= 240 && bearing < 270) {
+        return 9;
+    }
+    else if (bearing >= 270 && bearing < 300) {
+        return 10;
+    }
+    else if (bearing >= 300 && bearing < 330) {
+        return 11;
+    }
+    else if (bearing >= 330 && bearing < 360) {
+        return 12;
+    }
+    else {
+        return 1;
+    }
+
+}
+
+function cleanPval(val) {
+    if (val == undefined) {
+        return 0;
+        alert(val);
+    }
+    else if (val > 20) {
+        return val;
+    } else {
+        return 0;
+    }
+}
+
+function calcStars(val) {
+    if (val > 4000) {
+        return 5;
+    }
+    else if (val > 3000 && val <= 4000) {
+        return 4;
+    }
+    else if (val > 2000 && val <= 3000) {
+        return 3;
+    }
+    else if (val > 1000 && val <= 2000) {
+        return 2;
+    }
+    else if (val > 0 && val <= 1000) {
+        return 1;
+    }
+    else if (val <= 0) {
+        return 0;
+    }
+
+    else return 0;
+
+}
 
 function drawWeather(ID) {
     var bdata = localStorage.getItem(ID);
@@ -1022,25 +1112,7 @@ function drawWeather(ID) {
     //ctx2d.fillText("Hourly weather for " + location + ".", 0, 10);
     //ctx2d.fillText("Last updated: " + hours + " hours ago.", 0, 30);
 
-    ctx2d.fillStyle = "#f2e857";
-    ctx2d.fillRect(0, 10, 60, 16);
-    ctx2d.fillStyle = '#000';
-    ctx2d.font = '11px Arial';
-    ctx2d.fillText("Wind (mph)", 2, 22);
-
-    ctx2d.fillStyle = "#66A68B";
-    ctx2d.fillRect(60, 10, 55, 16);
-    ctx2d.fillStyle = '#FFF';
-    ctx2d.font = '11px Arial';
-    ctx2d.fillText("Temp (C)", 64, 22);
-
-    ctx2d.fillStyle = "#2489ce";
-    ctx2d.fillRect(115, 10, 55, 16);
-    ctx2d.fillStyle = '#FFF';
-    ctx2d.font = '11px Arial';
-    ctx2d.fillText("Rain (mm)", 119, 22);
-
-   // ctx2d.beginPath();
+      // ctx2d.beginPath();
    // ctx2d.moveTo(1, 50);
   //  ctx2d.lineTo(1, 1500);
    // ctx2d.strokeStyle = "#2fb4c8";
@@ -1049,12 +1121,12 @@ function drawWeather(ID) {
    // ctx2d.beginPath();
    // ctx2d.moveTo(350, 50);
   //  ctx2d.lineTo(350, 1500);
-   // ctx2d.strokeStyle = "#2fb4c8";
+    ctx2d.strokeStyle = "#2fb4c8";
    // ctx2d.stroke();
    // ctx2d.translate(0, 0);
-   // ctx2d.save();
-    
-    
+    ctx2d.save();
+
+
     $.each(parsed_json.hourly_forecast, function (i, zone) {
         //ctx2d.restore();
 
@@ -1131,6 +1203,7 @@ function drawWeather(ID) {
         //arrow
 
         ctx2d.save();
+        ctx2d.strokeStyle = "#2fb4c8";
         ctx2d.translate(30, posy + 50);
         ctx2d.rotate(90 * Math.PI / 180);
         //ctx2d.save();
@@ -1168,19 +1241,21 @@ function drawWeather(ID) {
 
 
         //wind
-        ctx2d.fillStyle = "#f2e857";
-        ctx2d.fillRect(53, posy + 16, ws + 20, 16);
+        ctx2d.fillStyle = "#39c46e";
+        ctx2d.fillRect(53, posy + 4, ws + 25, 18);
 
-        ctx2d.font = '10px Arial';
-        ctx2d.fillStyle = "#000";
-        ctx2d.fillText("mph", 67, posyt + 17);
-        ctx2d.fillText(zone.wspd.metric, 55, posyt + 17);
+        ctx2d.font = '14px Arial';
+        ctx2d.fillStyle = "#fff";
+        ctx2d.font = '12px Arial';
+        ctx2d.fillText("mph", 68, posyt + 8);
+        ctx2d.fillText(zone.wspd.metric, 55, posyt + 8);
 
         //temp
-        ctx2d.fillStyle = "#66A68B";
-        ctx2d.fillRect(start, posy + 32, temp, 16);
-        ctx2d.font = '10px Arial';
-        ctx2d.fillStyle = temp_txt;
+        ctx2d.fillStyle = "#2fb4c8";
+        //      ctx2d.fillStyle = "#66A68B";
+        //      ctx2d.fillRect(start, posy + 32, temp, 16);
+        ctx2d.font = '12px Arial';
+        //        ctx2d.fillStyle = temp_txt;
         ctx2d.fillText(zone.temp.metric, (start + 2), posyt + 33);
 
         //rain
@@ -1210,31 +1285,99 @@ function drawWeather(ID) {
 
         dt_ct = dt_ct + 1;
         var brg = winddeg;
-        var pval0 = getP(brg - 30);
-        var pval1 = getP(brg + 30);
-        var pval2 = getP(brg);
+        var pval0f = getP_foll(brg);
+        var pval1f = getP_foll(brg - 30);
+        var pval2f = getP_foll(brg + 30);
+        var pval0h = getP_head(brg);
+        var pval1h = getP_head(brg - 30);
+        var pval2h = getP_head(brg + 30);
+        //   $('#bdata').append("fol: " + pval0f + "." + pval1f + "." + pval2f + "</br>");
+        //   $('#bdata').append("head: " + pval0h + "." + pval1h + "." + pval2h + "</br>");
         var pArray = bdata.split(',');
-        var arval1 = pArray[pval0];
-        var arval2 = pArray[pval1];
-        var arval3 = pArray[pval2];
-        var foll_wind_val = (arval1 + arval2 + arval3) * zone.wspd.metric;
+        var arval1f = parseInt(pArray[pval0f - 1]); //brg
+        var arval2f = parseInt(pArray[pval1f - 1]);
+        var arval3f = parseInt(pArray[pval2f - 1]);
+        var arval1h = parseInt(pArray[pval0h - 1]);  //brg
+        var arval2h = parseInt(pArray[pval1h - 1]);
+        var arval3h = parseInt(pArray[pval2h - 1]);
+        var windspeed = zone.wspd.metric;
+        //windspeed = 20;
+        arval1f = cleanPval(arval1f);
+        arval2f = cleanPval(arval2f);
+        arval3f = cleanPval(arval3f);
+        arval1h = cleanPval(arval1h);
+        arval2h = cleanPval(arval2h);
+        arval3h = cleanPval(arval3h);
+
+        var brgf0 = arval1f * windspeed;
+        var brgf1 = parseInt(arval2f * windspeed) * 0.75;
+        var brgf2 = parseInt(arval3f * windspeed) * 0.75;
+        var brgh0 = parseInt(arval1h * windspeed);  //fine 2h //not 1h
+        var brgh1 = parseInt(arval2h * windspeed) * 0.75;
+        var brgh2 = parseInt(arval3h * windspeed) * 0.75;
+
+        var foll_wind_val = parseInt(brgf0) + parseInt(brgf1) + parseInt(brgf2);  //1000; // ((arval1f * windspeed) + ((arval2f * windspeed) / 0.5) + ((arval3f * windspeed) / 0.5));
+        var head_wind_val = parseInt(brgh0) + parseInt(brgh1) + parseInt(brgh2);
+        //head_wind_val = brgh0;
+        //alert(brgh0);
+        var starval = 500 + (parseInt(foll_wind_val) - parseInt(head_wind_val));
+        // $('#bdata').append("starval:" + starval + "</br>");
+        var numstars = 0;
+
         //var head_wind_val
         //alert(pArray);
         ctx2d.font = '12px Arial';
         ctx2d.fillStyle = "#FFF";
-        ctx2d.fillText(cond + " " + " " + arval1 + " " + arval2 + " " + arval3, 53, posyt);
-
+        // ctx2d.fillText(brg + "." + pval0f + "." + arval1f + " .. " + (brg - 30) + "." + pval1f + "." + arval2f + " .. " + (brg + 30) + "." + pval2f + "." + arval3f + " " + foll_wind_val + "stm:" + numstars, 53, posyt);
+        // ctx2d.fillText(brg + "." + pval0h + "." + arval1h + " .. " + (brg - 30) + "." + pval1h + "." + arval2h + " .. " + (brg + 30) + "." + pval2h + "." + arval3h + " " + head_wind_val + "st:" + starval, 53, posyt + 32);
+        ctx2d.fillText(brg + " .. " + arval1h + " .. " + arval2h + " .. " + arval2h, 53, posyt + 32);
         ctx2d.font = '13px Arial Bold ';
         ctx2d.fillStyle = "#ffca4a";
         //if (foll_wind_val > 20 || 
-        star(ctx2d, 260, posy + 30, 15, 5, 0.5, "f");
-        star(ctx2d, 295, posy + 30, 15, 5, 0.5, "f");
-        star(ctx2d, 330, posy + 30, 15, 5, 0.5, "o");
+
+        if (starval <= 0) {
+            drawStarsO(ctx2d, 5, posy + 30, 230);
+        } else {
+            numstars = calcStars(starval);
+            drawStarsF(ctx2d, numstars, posy + 30);
+        }
+
+        //star(ctx2d, 260, posy + 30, 10, 5, 0.5, "f");
+        //star(ctx2d, 295, posy + 30, 10, 5, 0.5, "f");
+        //star(ctx2d, 330, posy + 30, 10, 5, 0.5, "o");
         posy = posy + 76;
         posyt = posyt + 76;
         // ctx2d.save();
 
     });
+
+}
+
+function drawStarsO(ctx2d, i, y, xval) {
+    do {
+        star(ctx2d, xval, y, 10, 5, 0.5, "o");
+        xval = xval + 25;
+    }
+    while (--i);
+
+}
+
+function drawStarsF(ctx2d,i, y) {
+    var xval = 230;
+    var j;
+    j = (5 - i);
+    do {
+        star(ctx2d, xval, y, 10, 5, 0.5, "f");
+        xval = xval + 25;
+     if (i == 1) {
+            drawStarsO(ctx2d,j,y,xval);
+        }
+
+    } 
+
+    while (--i);
+
+    
 
 }
 

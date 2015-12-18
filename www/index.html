@@ -136,14 +136,14 @@
       <div class="dash-unit">
       
             <div class="timebtns">
-      		<div class="btn-group btn-group-s" role="group" aria-label="...">
-  <button type="button" class="btn btn-danger btn-sm">24 Hrs</button>
-  <button type="button"  class="btn btn-danger btn-sm">Sat</button>
-  <button type="button" class="btn btn-danger btn-sm">Sun</button>
+      		<div class="btn-group btn-group-s" role="group">
+  <button type="button" class="btn btn-danger btn-sm">1-3Hrs</button>
+  <button type="button"  class="btn btn-danger btn-sm">4-6Hrs</button>
+  <button type="button" class="btn btn-danger btn-sm">7-9Hrs</button>
    <button type="button" class="btn btn-danger btn-sm">Mon</button>
 </div>
 </div>
-<div id="act_table">
+<div id="act_table" style="display:none">
       <div class="framemail">
     			<div class="window">
 			        <ul class="mail">
@@ -196,6 +196,8 @@
           <!-- LOCAL TIME BLOCK -->
       		<div class="weather-unit">
 	      		<dtitle>Weather</dtitle>
+                <div id="pdata"></div>
+                 <div id="bdata"></div>
 	      		<hr>
                 <div id="canvas-holder2" style="text-align:center">
 <canvas id="weather" width='400px' height='1500px' id="canvas"><canvas>
@@ -208,6 +210,15 @@
         </div>
      </div>
       
+       <div class="row">
+       
+    <div class="col-xs-12 col-sm-12 col-lg-12">
+   <div class="weather-unit">
+	      		<dtitle>Location</dtitle>
+                <div id="location"></div>
+      </div>
+      </div>
+      </div>
       
 	</div> <!-- /container -->
 	

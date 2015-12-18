@@ -38,11 +38,13 @@ var app = {
         alert("ready");
         $.getScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog&sensor=false');
         checkData();
-        $('#act_table').show();
+        checkConnection();
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        //$('#act_table').show();
     },
 
     Offline: function () {
-        // alert("offline");
+        alert("offline");
     },
 
     // Update DOM on a Received Event
@@ -71,7 +73,7 @@ var app = {
 // onSuccess Geolocation
 //
 function onSuccess(position) {
-    var element = document.getElementById('geolocation');
+    var element = document.getElementById('location');
     element.innerHTML = 'Latitude: ' + position.coords.latitude + '<br />' +
                             'Longitude: ' + position.coords.longitude + '<br />' +
                             'Altitude: ' + position.coords.altitude + '<br />' +
@@ -147,7 +149,7 @@ function getNearby() {
 
 function drawTable() {
     $('#act_table_header').show();
-    $//('#act_table').show();
+    $('#act_table').show();
     $('#my_activities').show();
     $('#seg_data').hide();
     $('#seg_weather').hide();
@@ -158,8 +160,8 @@ function drawTable() {
     var midhtml = "";
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
-        midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "</p>" +
-        "<div class=\"actions\"><a><img src=\"img/star.jpg\"></a></div></li>";
+        midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "m</p>" +
+        "<div class=\"actions\"></div></li>";
         //alert("i=" + seg.ID + "   " + seg.poly);
         act_ct++;
     });
@@ -185,7 +187,7 @@ function stConn2() {
 
             strava_deets.deets.push({
                 "firstname": data.firstname,
-                "lastname": data.lastname
+                "lastname": data.lastname,
 
 
             });
