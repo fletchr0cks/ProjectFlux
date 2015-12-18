@@ -148,7 +148,7 @@ function drawChart(ID) {
     var pArray = new Array();
     pArray.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
     localStorage.setItem(ID, pArray);
-    $('#pdata').html("ID: " + ID + " " + pArray);
+ //   $('#pdata').html("ID: " + ID + " " + pArray);
     // segAlgoData();
     var obj = [{ value: p1,
         color: "#f93",
@@ -1433,7 +1433,8 @@ var Arrow = function (o) {
 
 
 function getW() {
-    var loc = "56.052,-2.732";
+    //var loc = "56.052,-2.732";
+    var loc = localStorage.getItem('loc');
     //"37.833,-122.483";
     //"56.052,-2.732";
     $.ajax({
@@ -1448,7 +1449,7 @@ function getW() {
 
             var jsontext = JSON.stringify(json);
             var location = json['location']['city'];
-            $('#footer_msg').html("Updated weather for " + location);
+            $('#location').append("Retrieved weather for " + location + "</br>");
             localStorage.setItem('wdata1', jsontext);
             var epoch = Math.round(new Date().getTime() / 1000)
             var timenow = new Date();

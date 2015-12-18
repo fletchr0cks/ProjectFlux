@@ -34,12 +34,13 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function () {
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
         app.receivedEvent('deviceready');
         alert("ready");
         $.getScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog&sensor=false');
         checkData();
         checkConnection();
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        
         //$('#act_table').show();
     },
 
@@ -73,15 +74,13 @@ var app = {
 // onSuccess Geolocation
 //
 function onSuccess(position) {
-    var element = document.getElementById('location');
-    element.innerHTML = 'Latitude: ' + position.coords.latitude + '<br />' +
-                            'Longitude: ' + position.coords.longitude + '<br />' +
-                            'Altitude: ' + position.coords.altitude + '<br />' +
-                            'Accuracy: ' + position.coords.accuracy + '<br />' +
-                            'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '<br />' +
-                            'Heading: ' + position.coords.heading + '<br />' +
-                            'Speed: ' + position.coords.speed + '<br />' +
-                            'Timestamp: ' + position.timestamp + '<br />';
+
+    //var element = document.getElementById('location');
+    var html = 'Latitude: ' + position.coords.latitude + '<br />' +
+                            'Longitude: ' + position.coords.longitude + '<br />';
+    $('#location').append(html);
+    var loc = position.coords.latitude + "," + position.coords.longitude;
+    localStorage.setItem('loc', loc);
 }
 
 // onError Callback receives a PositionError object
@@ -89,6 +88,8 @@ function onSuccess(position) {
 function onError(error) {
     alert('code: ' + error.code + '\n' +
               'message: ' + error.message + '\n');
+              var element = document.getElementById('location');
+    element.innerHTML = "GPS not available for location";
 }
 
 function checkData() {
@@ -160,6 +161,7 @@ function drawTable() {
     var midhtml = "";
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
+    //poly2(seg.ID,i,seg.name);
         midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "m</p>" +
         "<div class=\"actions\"></div></li>";
         //alert("i=" + seg.ID + "   " + seg.poly);
