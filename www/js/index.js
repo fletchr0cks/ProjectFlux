@@ -161,16 +161,52 @@ function drawTable() {
     var midhtml = "";
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
-    //poly2(seg.ID,i,seg.name);
+        //poly3(seg.ID,i,seg.name);
         midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "m</p>" +
-        "<div class=\"actions\"></div></li>";
-        //alert("i=" + seg.ID + "   " + seg.poly);
-        act_ct++;
+        "<div class=\"actions\" id=\"stars_" + seg.ID + "\"></div></li>";
+            act_ct++;
     });
-    // alert(midhtml);
     var ref_btn = "<div class=\"minihead\"><button class=\"btn btn-primary\" onclick=\"stAct()\">Refresh My Activities</button></div>";
     $('#actMsgs').html(act_ct + " Activities loaded.");
     $('#act_table').html(top + midhtml + "</ul></div></div>");
+     $.each(j2.segs, function (i, seg) {
+       
+       var elementID = 'canvas' + seg.ID; // Unique ID
+
+
+       //alert(elementID);
+$('<canvas>').attr({
+    id: elementID
+}).css({
+    width: '150px',
+    height: '50px'
+}).appendTo('#stars_' + seg.ID);
+
+var canvas = document.getElementById(elementID); 
+
+
+
+      //  var canvas = document.createElement('stars_' + seg.ID);
+   //     document.body.appendChild(canvas);
+         if (!canvas) {
+        alert('Error: Cannot find the canvas element!');
+        return;
+      }
+
+      if (!canvas.getContext) {
+        alert('Error: Canvas context does not exist!');
+        return;
+      }
+        //var canvas2 = document.getElementById('stars_' + ID);
+        var ctx = canvas.getContext('2d');
+        //ctx.fillStyle = "#FF0000";
+        //ctx.fillRect(0, 10, 100, 15);
+        //alert("i=" + seg.ID + "   " + seg.poly);
+        drawIDstars(seg.ID,ctx);
+       
+    });
+    // alert(midhtml);
+    
 }
 
 function stConn2() {

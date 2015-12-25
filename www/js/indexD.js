@@ -1064,6 +1064,27 @@ function calcStars(val) {
 
 }
 
+function drawIDstars(ID,ctx) {
+   // var canvas2 = document.getElementById('stars_' + ID);
+   // var ctx = canvas2.getContext('2d');
+    //alert(canvas2);
+
+    //ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
+   // ctx2d.font = '13px Arial Bold ';
+    ctx.fillStyle = "#ffca4a";
+  //  ctx.font = '10px Arial';
+  //  ctx.fillText("hi", 0, 0);
+  //  ctx.fillStyle = "#FF0000";
+    //
+    
+    //ctx.fillRect(0, 10, 100, 15);
+   //drawStarsF(ctx, 3, 0);
+    //
+   
+   star(ctx, 20, 40, 10, 5, 0.5, "f");
+
+}
+
 function drawWeather(ID) {
     var bdata = localStorage.getItem(ID);
 
