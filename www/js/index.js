@@ -178,8 +178,8 @@ function drawTable() {
 $('<canvas>').attr({
     id: elementID
 }).css({
-    width: '150px',
-    height: '50px'
+    width: '400px',
+    height: '80px'
 }).appendTo('#stars_' + seg.ID);
 
 var canvas = document.getElementById(elementID); 
@@ -202,7 +202,7 @@ var canvas = document.getElementById(elementID);
         //ctx.fillStyle = "#FF0000";
         //ctx.fillRect(0, 10, 100, 15);
         //alert("i=" + seg.ID + "   " + seg.poly);
-        drawIDstars(seg.ID,ctx);
+        drawIDstars(seg.ID,ctx,i);
        
     });
     // alert(midhtml);

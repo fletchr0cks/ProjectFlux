@@ -1064,10 +1064,12 @@ function calcStars(val) {
 
 }
 
-function drawIDstars(ID,ctx) {
+function drawIDstars(ID,ctx,i) {
    // var canvas2 = document.getElementById('stars_' + ID);
    // var ctx = canvas2.getContext('2d');
     //alert(canvas2);
+    var y = 20;
+    y = (20 * (i +1));
 
     //ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
    // ctx2d.font = '13px Arial Bold ';
@@ -1081,7 +1083,9 @@ function drawIDstars(ID,ctx) {
    //drawStarsF(ctx, 3, 0);
     //
    
-   star(ctx, 20, 40, 10, 5, 0.5, "f");
+   //star(ctx, 20, y, 10, 5, 0.5, "f");
+   drawStarsF(ctx, 4, y,10);
+
 
 }
 
@@ -1360,7 +1364,7 @@ function drawWeather(ID) {
             drawStarsO(ctx2d, 5, posy + 30, 230);
         } else {
             numstars = calcStars(starval);
-            drawStarsF(ctx2d, numstars, posy + 30);
+            drawStarsF(ctx2d, numstars, posy + 30,230);
         }
 
         //star(ctx2d, 260, posy + 30, 10, 5, 0.5, "f");
@@ -1383,8 +1387,8 @@ function drawStarsO(ctx2d, i, y, xval) {
 
 }
 
-function drawStarsF(ctx2d,i, y) {
-    var xval = 230;
+function drawStarsF(ctx2d,i, y,xval) {
+    //var xval = 230;
     var j;
     j = (5 - i);
     do {
