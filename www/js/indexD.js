@@ -231,7 +231,7 @@ function saveChart(ID) {
 
 
 function drawChart(ID) {
-    drawWeather(ID);
+    //drawWeather(ID);
     var chart_store = ID+"_chart";
     alert(chart_store);
     var obj = JSON.parse(localStorage.getItem(chart_store)); //eval
@@ -1237,6 +1237,7 @@ function drawIDstars(ID,ctx,i) {
 function drawWeather(ID) {
     //var bdata = localStorage.getItem(ID+"_array");
     var bearing_store = ID+"_array";
+    alert(bearing_store);
     var bdata = JSON.parse(localStorage.getItem(bearing_store)); //eval
     //var bdata = eval('(' + bearing_json + ')');
     //readW();
