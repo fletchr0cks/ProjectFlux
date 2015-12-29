@@ -94,14 +94,14 @@ function onError(error) {
 
 function checkData() {
 
-    if (localStorage.getItem("segdata") === null) {
+    if (localStorage.getItem("st_token") === null) {
         $('#status_msgs').append("no data");
         $('#UnAuthApp').show();
         // initBtns();
        // alert("no data");
     } else {
        // alert("data");
-        var data = localStorage.getItem("segdata");
+        var data = localStorage.getItem("st_token");
         $('#status_msgs').append("data </br> " + data);
         //$('#settings').hide();
         initBtns();
@@ -269,26 +269,42 @@ function stAct() {
     OAuth.popup('strava', { cache: true }).done(function (result) {
         result.get('https://www.strava.com/api/v3/activities').done(function (data) {
 
-            localStorage.removeItem('segdata');
+            //localStorage.removeItem('segdata');
             var jsontext = JSON.stringify(data);
             $('#status_msgs').append(jsontext);
             var ct = 0;
             $.each(data, function (i, seg) {
+            var poly = data[i]['map']['summary_polyline'];
+            var ID = data[i]['id'];
+            
+                
                 strava_segs.segs.push({
                     "name": data[i]['name'],
                     "ID": data[i]['id'],
                     "poly": data[i]['map']['summary_polyline'],
                     "dist": data[i]['distance'],
                     "egain": data[i]['total_elevation_gain']
+                    //alert(poly + "hij" + ID);
                 });
+                alert(ct);
                 ct++;
                 //     var name = data[i]['name'];
-                alert(data[i]['id']);
+                //alert(data[i]['id']);
+                //decodepoly(poly,ID);
                 //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
             });
             var jsonsegs = JSON.stringify(strava_segs);
             localStorage.setItem('segdata', jsonsegs);
-            $('#actMsgs').append("Retrieved " + ct + " Activities.");
+            
+            
+            $.each(data, function (i, seg) {
+            var poly = data[i]['map']['summary_polyline'];
+            var ID = data[i]['id'];
+            decodepoly(poly,ID);
+                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
+            });
+            
+            alert("Retrieved " + ct + " Activities.");
             //drawTable();
 
         });

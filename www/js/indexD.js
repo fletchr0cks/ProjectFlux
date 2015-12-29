@@ -36,7 +36,6 @@ function calcDistProp(dist, totalDist) {
     return perc;
 }
 
-var p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
 var w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0, w11 = 0, w12 = 0;
 
 
@@ -131,7 +130,7 @@ function segAlgoData() {
 
 
 
-function drawChart(ID) {
+function saveChart(ID) {
     p1 = parseInt(x10(p1));
     p2 = parseInt(x10(p2));
     p3 = parseInt(x10(p3));
@@ -144,12 +143,13 @@ function drawChart(ID) {
     p10 = parseInt(x10(p10));
     p11 = parseInt(x10(p11));
     p12 = parseInt(x10(p12));
-    $('#p1').html("drawing chart, p1=" + p1);
+    //alert("drawing chart, p1=" + p1);
     var pArray = new Array();
     pArray.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-    localStorage.setItem(ID, pArray);
+    localStorage.setItem(ID+"_array", pArray);
  //   $('#pdata').html("ID: " + ID + " " + pArray);
     // segAlgoData();
+    //alert(pArray);
     var obj = [{ value: p1,
         color: "#f93",
         highlight: "#f93",
@@ -222,10 +222,16 @@ function drawChart(ID) {
 	    label: "% NNE"
 	}];
 
-    localStorage.setItem('gameStorage', JSON.stringify(obj));
+    localStorage.setItem(ID+"_chart", JSON.stringify(obj));
     //And to retrieve the object later, such as on page refresh or browser close/open...
+    //drawWeather(ID);
+    alert("end");
+}
+
+
+function drawChart(ID) {
     drawWeather(ID);
-    var obj = JSON.parse(localStorage.getItem('gameStorage'));
+    var obj = JSON.parse(localStorage.getItem(ID+'_chart'));
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
@@ -248,6 +254,7 @@ function drawChart(ID) {
     });
 
 }
+
 
 function getDistance(latlng1, latlng2) {
     var dist = google.maps.geometry.spherical.computeDistanceBetween(latlng1, latlng2);
@@ -365,7 +372,7 @@ function removeMarkers() {
 
 var mappoly;
 var flightPlanCoordinates;
-var polyline;
+var polyline_o;
 
 function addPolyline(el) {
     polyName = new google.maps.Polyline({
@@ -519,6 +526,9 @@ function poly_map(ID, i, name) {
 
     var pl = j2.points[i].points;
     drawMap(pl);
+    var p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
+
+
 
     p1 = 0
     p2 = 0
@@ -551,9 +561,10 @@ function poly2(ID, i, name) {
     var json = localStorage.getItem('segdata');
     var j2 = eval('(' + json + ')');
     var dist = j2.segs[i].dist;
+    var egain = j2.segs[i].egain;
     var top_html = "<h5>" + name + "</h5><div class=\"row\"><div class=\"col-xs-12\"><div class=\"half-unit\"><table><tr><td class=\"detailstd\">" +
         "<div class=\"cont\"><p><bold>" + dist + "</bold></p><p>Total Distance</p>" +
-        "</div></td><td><div class=\"cont\"><p><bold>" + dist + "</bold></p><p>Elevation Gain</p>" +
+        "</div></td><td><div class=\"cont\"><p><bold>" + egain + "</bold></p><p>Elevation Gain</p>" +
         "</div></td></tr></table></div></div></div>";
      $('#seg_details').html(top_html);
     var pl = j2.segs[i].poly;
@@ -573,8 +584,8 @@ function poly2(ID, i, name) {
     p12 = 0;
     totalDist = 0
     $('#title').html(name);
-    decodepoly(pl, ID);
-
+    //decodepoly(pl, ID);
+    drawChart(ID);
 
 }
 
@@ -752,7 +763,8 @@ function drawMap(poly) {
 
     //$("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?center=Cape%20Canaveral&zoom=10&format=png&sensor=false&size=700x320&maptype=roadmap&markers=color:brown|Cape%20Canaveral&"+src+"\">");
 
-    var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&" + src + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
+    //var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&" + src + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
+    var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
     $('#static_map').html(map);
 
 }
@@ -787,28 +799,35 @@ function maptest() {
     $("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?center=Cape%20Canaveral&zoom=10&format=png&sensor=false&size=700x320&maptype=roadmap&markers=color:brown|Cape%20Canaveral&" + src + "\">");
 }
 
+var p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
 
 function decodepoly(polyline, ID) {
+    p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
 
     var latlong = "ll";
     var latlong2 = "ll";
-
+    //alert(polyline);
     latlong = google.maps.geometry.encoding.decodePath(polyline);
     latlong2 = latlong;
     //initMap(latlong);
+  //  alert(latlong);
     var myStringArray1 = latlong;
     var myStringArray2 = latlong2;
     var arrayLength2 = myStringArray2.length;
     var arrayLength1 = myStringArray1.length;
     //bearingArray(myStringArray2);
-
+    
     for (var i = 0; i < arrayLength1; i++) {
-        getDistance(myStringArray1[i], myStringArray1[i + 1]);
-        if (i == (arrayLength1 - 2)) {
-            $('#result2').html("i=" + i + " " + totalDist);
+   // alert(myStringArray1[i] + " ... " + myStringArray1[i + 1]);
+//        getDistance(myStringArray1[i], myStringArray1[i + 1]);
+    var plus1= myStringArray1[i + 1];
+      if ((plus1 != undefined) && (i == (arrayLength1 - 2))) {
+           alert("i=" + i + " " + totalDist);
             bearingArray(myStringArray2, totalDist, ID);
         }
-    }
+        
+        
+   }
 
 
 }
@@ -826,10 +845,64 @@ function returnpoly(polyline) {
 
 function bearingArray(myStringArray1, totalDist, ID) {
     var arrayLength1 = myStringArray1.length;
+    
     for (var i = 0; i < arrayLength1; i++) {
-        getBearing(myStringArray1[i], myStringArray1[i + 1], totalDist);
+        var bearing = google.maps.geometry.spherical.computeHeading(latlng1, latlng2);
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(latlng1, latlng2);
+    var percent = calcDistProp(dist, totalDist);
+    dist = Math.round(parseInt(dist));
+    bearing = Math.round(parseInt(bearing));
+    if (bearing < 0) {
+        bearing = calcBearing(bearing);
+    }
+    $('#result2').html("bearing= " + bearing + " percent= " + percent + "</br>");
+    //whichP(bearing, percent);  make it return > save
+    
+    if (bearing < 30) {
+        p1 = p1 + (percent / 100);
+    }
+    if (bearing >= 30 && bearing < 60) {
+        p2 = p2 + (percent / 100);
+    }
+    if (bearing >= 60 && bearing < 90) {
+        p3 = p3 + (percent / 100);
+        //alert(p3);
+    }
+    if (bearing >= 90 && bearing < 120) {
+        p4 = p4 + (percent / 100);
+    }
+    if (bearing >= 120 && bearing < 150) {
+        p5 = p5 + (percent / 100);
+    }
+    if (bearing >= 150 && bearing < 180) {
+        p6 = p6 + (percent / 100);
+    }
+    if (bearing >= 180 && bearing < 210) {
+        p7 = p7 + (percent / 100);
+        // alert("p7=" + p7);
+    }
+    if (bearing >= 210 && bearing < 240) {
+        p8 = p8 + (percent / 100);
+    }
+    if (bearing >= 240 && bearing < 270) {
+        p9 = p9 + (percent / 100);
+    }
+    if (bearing >= 270 && bearing < 300) {
+        p10 = p10 + (percent / 100); ;
+    }
+    if (bearing >= 300 && bearing < 330) {
+        p11 = p11 + (percent / 100);
+    }
+    if (bearing >= 330 && bearing < 360) {
+        p12 = p12 + (percent / 100);
+    }
+
+    
+    
+      //  getBearing(myStringArray1[i], myStringArray1[i + 1], totalDist);
         if (i == (arrayLength1 - 2)) {
-            drawChart(ID);
+             alert(i + " " + (arrayLength1 - 2));
+             saveChart(ID);
             // showP();
 
         }
@@ -1090,7 +1163,7 @@ function drawIDstars(ID,ctx,i) {
 }
 
 function drawWeather(ID) {
-    var bdata = localStorage.getItem(ID);
+    var bdata = localStorage.getItem(ID+"_array");
 
     //readW();
     var jsondata = localStorage.getItem('wdata1')
