@@ -231,9 +231,11 @@ function saveChart(ID) {
 
 
 function drawChart(ID) {
-    drawWeather(ID);
-    var chart_json = localStorage.getItem(ID+'_chart'); //eval
-    var obj = eval('(' + chart_json + ')');
+    //drawWeather(ID);
+    var chart_store = ID+"_chart";
+    alert(chart_store);
+    var obj = localStorage.getItem(chart_store); //eval
+    //var obj = eval('(' + chart_json + ')');
     alert(obj);
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
