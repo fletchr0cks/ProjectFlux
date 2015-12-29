@@ -131,6 +131,7 @@ function segAlgoData() {
 
 
 function saveChart(ID) {
+    //alert("save"+ID);
     p1 = parseInt(x10(p1));
     p2 = parseInt(x10(p2));
     p3 = parseInt(x10(p3));
@@ -225,13 +226,14 @@ function saveChart(ID) {
     localStorage.setItem(ID+"_chart", JSON.stringify(obj));
     //And to retrieve the object later, such as on page refresh or browser close/open...
     //drawWeather(ID);
-    alert("end");
+    //alert(ID + " end");
 }
 
 
 function drawChart(ID) {
     drawWeather(ID);
-    var obj = JSON.parse(localStorage.getItem(ID+'_chart'));
+    var chart_json = JSON.parse(localStorage.getItem(ID+'_chart')); //eval
+    var obj = eval('(' + chart_json + ')');
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
@@ -803,7 +805,7 @@ var p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 
 
 function decodepoly(polyline, ID) {
     p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
-
+    totalDist = 0;
     var latlong = "ll";
     var latlong2 = "ll";
     //alert(polyline);
@@ -819,11 +821,78 @@ function decodepoly(polyline, ID) {
     
     for (var i = 0; i < arrayLength1; i++) {
    // alert(myStringArray1[i] + " ... " + myStringArray1[i + 1]);
-//        getDistance(myStringArray1[i], myStringArray1[i + 1]);
+       getDistance(myStringArray1[i], myStringArray1[i + 1]);
     var plus1= myStringArray1[i + 1];
       if ((plus1 != undefined) && (i == (arrayLength1 - 2))) {
-           alert("i=" + i + " " + totalDist);
-            bearingArray(myStringArray2, totalDist, ID);
+           
+            //bearingArray(myStringArray2, totalDist, ID);
+    var arrayLength1 = myStringArray1.length;
+    //alert("i=" + i + " " + arrayLength1);
+    //  getBearing(myStringArray1[i], myStringArray1[i + 1], totalDist);
+
+    for (var i = 0; i < arrayLength1; i++) {
+        var latlng1 = myStringArray1[i];
+        var latlng2 = myStringArray1[i + 1];
+        var bearing = google.maps.geometry.spherical.computeHeading(latlng1, latlng2);
+        
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(latlng1, latlng2);
+    var percent = calcDistProp(dist, totalDist);
+    dist = Math.round(parseInt(dist));
+    bearing = Math.round(parseInt(bearing));
+    if (bearing < 0) {
+        bearing = calcBearing(bearing);
+    }
+    $('#result2').html("bearing= " + bearing + " percent= " + percent + "</br>");
+    //whichP(bearing, percent);  make it return > save
+    //alert(ID + "i="+i + " b=" + bearing);
+    if (bearing < 30) {
+        p1 = p1 + (percent / 100);
+    }
+    if (bearing >= 30 && bearing < 60) {
+        p2 = p2 + (percent / 100);
+    }
+    if (bearing >= 60 && bearing < 90) {
+        p3 = p3 + (percent / 100);
+        //alert(p3);
+    }
+    if (bearing >= 90 && bearing < 120) {
+        p4 = p4 + (percent / 100);
+    }
+    if (bearing >= 120 && bearing < 150) {
+        p5 = p5 + (percent / 100);
+    }
+    if (bearing >= 150 && bearing < 180) {
+        p6 = p6 + (percent / 100);
+    }
+    if (bearing >= 180 && bearing < 210) {
+        p7 = p7 + (percent / 100);
+        // alert("p7=" + p7);
+    }
+    if (bearing >= 210 && bearing < 240) {
+        p8 = p8 + (percent / 100);
+    }
+    if (bearing >= 240 && bearing < 270) {
+        p9 = p9 + (percent / 100);
+    }
+    if (bearing >= 270 && bearing < 300) {
+        p10 = p10 + (percent / 100); ;
+    }
+    if (bearing >= 300 && bearing < 330) {
+        p11 = p11 + (percent / 100);
+    }
+    if (bearing >= 330 && bearing < 360) {
+        p12 = p12 + (percent / 100);
+    }
+
+    
+    
+              if (i == (arrayLength1 - 2)) {
+             //alert(ID + "endofarray " + (arrayLength1 - 2));
+             saveChart(ID);
+            // showP();
+
+        }
+    }
         }
         
         
@@ -857,7 +926,7 @@ function bearingArray(myStringArray1, totalDist, ID) {
     }
     $('#result2').html("bearing= " + bearing + " percent= " + percent + "</br>");
     //whichP(bearing, percent);  make it return > save
-    
+    alert(bearing);
     if (bearing < 30) {
         p1 = p1 + (percent / 100);
     }
@@ -1163,8 +1232,9 @@ function drawIDstars(ID,ctx,i) {
 }
 
 function drawWeather(ID) {
-    var bdata = localStorage.getItem(ID+"_array");
-
+    //var bdata = localStorage.getItem(ID+"_array");
+    var bearing_json = JSON.parse(localStorage.getItem(ID+'_array')); //eval
+    var bdata = eval('(' + bearing_json + ')');
     //readW();
     var jsondata = localStorage.getItem('wdata1')
     var parsed_json = eval('(' + jsondata + ')');

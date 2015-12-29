@@ -258,6 +258,50 @@ function stTest2() {
 
 }
 
+var timer1
+
+function parse() {
+var seg_data =localStorage.getItem('segdata');
+//var data = JSON.stringify(seg_data);
+var j2 = eval('(' + seg_data + ')');
+var ct = 5;
+var dist = j2.segs[0].dist;
+var index = 0;
+    $.each(j2.segs, function (i, seg) {
+       
+      var name = i;
+      
+      var poly = seg.poly; //seg[i]['map']['summary_polyline'];
+      var ID = seg.ID;
+      //alert("start " + i);
+      var timer = setInterval(function () { startDecode(poly,ID,i,index) }, 1000);
+      //var speed = 1000;
+      //var timer = setInterval(startDecode(poly,ID,i), speed);
+      
+      index++;
+      //startDecode(poly,ID,i);
+      
+      function startDecode(poly,ID,i,index) {
+    clearInterval(timer);
+    //index++;
+   // alert(i + " start ... " + ID + " idx=" + index);
+    decodepoly(poly,ID);
+        
+    
+    //if (index >= 4) {
+    //    alert(index +" clear ,,, " +i);
+    //    clearInterval(timer);
+   // }
+        
+        }
+      
+    });
+
+
+}
+
+
+
 function stAct() {
     var strava_segs = {
         segs: []
@@ -286,7 +330,7 @@ function stAct() {
                     "egain": data[i]['total_elevation_gain']
                     //alert(poly + "hij" + ID);
                 });
-                alert(ct);
+                
                 ct++;
                 //     var name = data[i]['name'];
                 //alert(data[i]['id']);
@@ -295,14 +339,7 @@ function stAct() {
             });
             var jsonsegs = JSON.stringify(strava_segs);
             localStorage.setItem('segdata', jsonsegs);
-            
-            
-            $.each(data, function (i, seg) {
-            var poly = data[i]['map']['summary_polyline'];
-            var ID = data[i]['id'];
-            decodepoly(poly,ID);
-                //       midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly1()\">" + name + "<span class=\"badge\">4</span></li>";
-            });
+           
             
             alert("Retrieved " + ct + " Activities.");
             //drawTable();
@@ -324,8 +361,7 @@ function clearCache() {
 function showLocal() {
     $('#status_msgs').show();
     for (var i = 0; i < localStorage.length; i++) {
-        $('#status_msgs').append("</br > " + localStorage.key(i));
-        //+ " data: " + localStorage.getItem(localStorage.key(i)));
+        $('#status_msgs').append("</br > " + localStorage.key(i) + " data: " + localStorage.getItem(localStorage.key(i)));
 
         // do something with localStorage.getItem(localStorage.key(i));
     }
