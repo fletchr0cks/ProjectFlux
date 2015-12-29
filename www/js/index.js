@@ -94,14 +94,14 @@ function onError(error) {
 
 function checkData() {
 
-    if (localStorage.getItem("st_token") === null) {
+    if (localStorage.getItem("userdata") == null) {
         $('#status_msgs').append("no data");
         $('#UnAuthApp').show();
         // initBtns();
        // alert("no data");
     } else {
        // alert("data");
-        var data = localStorage.getItem("st_token");
+        var data = localStorage.getItem("userdata");
         $('#status_msgs').append("data </br> " + data);
         //$('#settings').hide();
         initBtns();
@@ -178,8 +178,8 @@ function drawTable() {
 $('<canvas>').attr({
     id: elementID
 }).css({
-    width: '400px',
-    height: '80px'
+    width: '250px',
+    height: '20px'
 }).appendTo('#stars_' + seg.ID);
 
 var canvas = document.getElementById(elementID); 

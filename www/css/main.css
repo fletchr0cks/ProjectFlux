@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * BLOCKS - Responsive Dashboard Theme
  *
  * Hey! Thanks for download this theme!
@@ -508,12 +508,12 @@ digiclock {
     color: #999;
 }
 .framemail .window .mail li .actions {
-    height: 16px;
+    height: 20px;
     position: absolute;
     right: 19px;
     text-align: right;
     top: 0;
-    width: 96px;
+    width: 250px;
     color: Aqua;
 }
 .framemail .window .mail li .actions img {
