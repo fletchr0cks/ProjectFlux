@@ -232,8 +232,9 @@ function saveChart(ID) {
 
 function drawChart(ID) {
     drawWeather(ID);
-    var chart_json = JSON.parse(localStorage.getItem(ID+'_chart')); //eval
+    var chart_json = localStorage.getItem(ID+'_chart'); //eval
     var obj = eval('(' + chart_json + ')');
+    alert(obj);
     var ctx = document.getElementById("chart-area").getContext("2d");
     //alert("p1= " + p1);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
@@ -1233,13 +1234,13 @@ function drawIDstars(ID,ctx,i) {
 
 function drawWeather(ID) {
     //var bdata = localStorage.getItem(ID+"_array");
-    var bearing_json = JSON.parse(localStorage.getItem(ID+'_array')); //eval
+    var bearing_json = localStorage.getItem(ID+'_array'); //eval
     var bdata = eval('(' + bearing_json + ')');
     //readW();
     var jsondata = localStorage.getItem('wdata1')
     var parsed_json = eval('(' + jsondata + ')');
 
-    //alert("cached");
+    alert(bdata);
     var cutoff = parseInt("16");
     var location = parsed_json['location']['city'];
     //alert(location);
