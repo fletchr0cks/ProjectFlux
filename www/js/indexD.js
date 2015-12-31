@@ -131,7 +131,7 @@ function segAlgoData() {
 
 
 function saveChart(ID) {
-    //alert("save"+ID);
+   // alert("save"+ID);
     p1 = parseInt(x10(p1));
     p2 = parseInt(x10(p2));
     p3 = parseInt(x10(p3));
@@ -231,14 +231,17 @@ function saveChart(ID) {
 
 
 function drawChart(ID) {
+    
     //drawWeather(ID);
     var chart_store = ID+"_chart";
-    alert(chart_store);
+  //alert(chart_store);
     var obj = JSON.parse(localStorage.getItem(chart_store)); //eval
     //var obj = eval('(' + chart_json + ')');
-    alert(obj);
-    var ctx = document.getElementById("chart-area").getContext("2d");
+    
+    var canvas = document.getElementById("chart-area")
+    var ctx = canvas.getContext("2d");
     //alert("p1= " + p1);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     window.myPolarArea = new Chart(ctx).PolarArea(obj, {
         responsive: false,
         showScale: true,
@@ -289,6 +292,7 @@ function back() {
 function showTest() {
     $('#testBtns').show();
     $('#actmsgs').show();
+    $('#info').show();
     $('#get_activities').show();
     $('#status_msgs').show();
 
@@ -395,8 +399,7 @@ var timer_m;
 
 function setMarkers(map, bounds_map, PID) {
     $('#map_table').show();
-    var top = "<ul class=\"table-view\">";
-    var midhtml = "";
+     var midhtml = "";
     clearTimeout(timer_m);
     //var bds_fmt = "50,-4,60,4";
     var bds_fmt = format_bounds(bounds_map.toString());
@@ -440,19 +443,29 @@ function setMarkers(map, bounds_map, PID) {
                     "points": seg.points,
                     "endlat": seg.end_latlng[0],
                     "endlongval": seg.end_latlng[1],
-                    "endlatlong": seg.end_latlng
+                    "endlatlong": seg.end_latlng,
+                    "dist": seg.distance,
+                    "egain": seg.elev_difference,
+                    "gain": seg.elev_difference
                 });
-
-                midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + seg.id + "," + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
+                
+                 midhtml = midhtml + "<li onclick=\"poly_map(" + seg.id + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.distance + "m</p>" +
+        "<div class=\"actions\" id=\"stars_n_" + seg.id + "\"><p>Calc</p></div></li>";
+           
+            //getW(seg.end_latlng,seg.id);
+            //alert(midhtml);
+                //midhtml = midhtml + "<li class=\"table-view-cell\" onclick=\"poly_map(" + seg.id + "," + i + ",'" + seg.name + "')\"><div id=\"seg_" + seg.id + "\">" + seg.name + "<span class=\"badge\"></span></div></li>";
                 ct++;
             });
-
+            var ht = parseInt((ct * 48) + 56);
+            $('#tableback_map').height(ht);
             var jsonsegs = JSON.stringify(seg_loc_data);
             localStorage.setItem('seg_loc_data', jsonsegs);
             var json_loc = { "points": [{ "lat": tlat, "longval": tlng, "name": "You are here!", "PID": "1"}] };
             $.each(seg_loc_data.points, function (i, markers) {
                 // console.log(json);
                 //      alert("hihi");
+             $('#stars_n' + markers.PID).html("<p>stars n</p>");
                 if (markers.PID == parseInt(PID)) {
                     //   var image = 'marker_search.png';
                     //ListComments(markers.PID);
@@ -491,12 +504,12 @@ function setMarkers(map, bounds_map, PID) {
 
             });
 
+            var top = "<div class=\"framemail\"><div class=\"window\"><ul class=\"mail\">";
 
-
-            $('#map_table').html(top + midhtml + "</ul>");
+            $('#map_table').html(top + midhtml + "</ul></div></div>");
             //var mcOptions = { gridSize: 50, maxZoom: 18 };
             //var markerCluster = new MarkerClusterer(map, markers_array, mcOptions);
-
+            parse(ct,"map");
 
 
 
@@ -520,21 +533,44 @@ function format_bounds(bds) {
     return (bds6);
 }
 
+function backMap() {
+    $('#map_table').show();
+    $('#seg_data').hide();
+    $('#seg_weather').hide();
+    $('#seg_details').hide();
+    $('#map_activities').show();
+    $('#map_canvas_nearby').show();
+
+}
+
+
 function poly_map(ID, i, name) {
     $('#map_table').hide();
     $('#seg_data').show();
-
+    $('#seg_weather').show();
+    $('#seg_details').show();
+    $('#map_activities').hide();
     $('#map_canvas_nearby').hide();
     $('#static_map').fadeIn();
     var json = localStorage.getItem('seg_loc_data');
     var j2 = eval('(' + json + ')');
+    //alert(json);
+    var dist = j2.points[i].dist;
+    var egain = j2.points[i].gain;
+    var top_html = "<h5>" + name + "</h5><div class=\"row\"><div class=\"col-xs-12\"><div class=\"half-unit\"><table><tr><td class=\"detailstd\">" +
+        "<div class=\"cont\"><p><bold>" + dist + "</bold></p><p>Total Distance</p>" +
+        "</div></td><td><div class=\"cont\"><p><bold>" + egain + "</bold></p><p>Elevation Gain</p>" +
+        "</div></td><td><div class=\"cont\" onclick=\"backMap()\"><p>Back</p><p></p>" +
+        "</div></td></tr></table></div></div></div>";
+     $('#seg_details').html(top_html);
+
+
 
     var pl = j2.points[i].points;
     drawMap(pl);
-    var p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0, p9 = 0, p10 = 0, p11 = 0, p12 = 0;
-
-
-
+   
+    
+    
     p1 = 0
     p2 = 0
     p3 = 0
@@ -549,9 +585,12 @@ function poly_map(ID, i, name) {
     p12 = 0;
     totalDist = 0
     $('#title').html(name);
-    decodepoly(pl, ID);
+    //decodepoly(pl, ID);
+    drawChart(ID);
+    
+    drawWeather(ID);
 
-
+    
 }
 
 
@@ -574,7 +613,7 @@ function poly2(ID, i, name) {
      $('#seg_details').html(top_html);
     var pl = j2.segs[i].poly;
     drawMap(pl);
-
+    drawWeather(ID);
     p1 = 0
     p2 = 0
     p3 = 0
@@ -768,8 +807,8 @@ function drawMap(poly) {
 
     //$("#map").append("<img src=\"http://maps.googleapis.com/maps/api/staticmap?center=Cape%20Canaveral&zoom=10&format=png&sensor=false&size=700x320&maptype=roadmap&markers=color:brown|Cape%20Canaveral&"+src+"\">");
 
-    //var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&" + src + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
-    var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
+    var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&" + src + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
+    //var map = "<img src=\"https://maps.googleapis.com/maps/api/staticmap?size=150x150&path=weight:3%7Ccolor:orange%7Cenc:" + poly + "&key=AIzaSyBVDErdMAzGhcjVpaqCP4rDpCe7r6WcDog\" alt=\"segment map\" />";
     $('#static_map').html(map);
 
 }
@@ -811,7 +850,7 @@ function decodepoly(polyline, ID) {
     totalDist = 0;
     var latlong = "ll";
     var latlong2 = "ll";
-    //alert(polyline);
+   // alert(polyline);
     latlong = google.maps.geometry.encoding.decodePath(polyline);
     latlong2 = latlong;
     //initMap(latlong);
@@ -845,7 +884,7 @@ function decodepoly(polyline, ID) {
     if (bearing < 0) {
         bearing = calcBearing(bearing);
     }
-    $('#result2').html("bearing= " + bearing + " percent= " + percent + "</br>");
+    $('#location').append("bearing= " + bearing + " percent= " + percent + "</br>");
     //whichP(bearing, percent);  make it return > save
     //alert(ID + "i="+i + " b=" + bearing);
     if (bearing < 30) {
@@ -929,7 +968,7 @@ function bearingArray(myStringArray1, totalDist, ID) {
     }
     $('#result2').html("bearing= " + bearing + " percent= " + percent + "</br>");
     //whichP(bearing, percent);  make it return > save
-    alert(bearing);
+    //alert(bearing);
     if (bearing < 30) {
         p1 = p1 + (percent / 100);
     }
@@ -1237,14 +1276,18 @@ function drawIDstars(ID,ctx,i) {
 function drawWeather(ID) {
     //var bdata = localStorage.getItem(ID+"_array");
     var bearing_store = ID+"_array";
-    alert(bearing_store);
-    var bdata = JSON.parse(localStorage.getItem(bearing_store)); //eval
+    var ID2 = "421422146";
+    //alert(bearing_store);
+    //var bdata = JSON.parse(localStorage.getItem(bearing_store)); //eval
+    var bdata = localStorage.getItem(bearing_store);
     //var bdata = eval('(' + bearing_json + ')');
     //readW();
-    var jsondata = localStorage.getItem('wdata1')
+    //alert(bdata);
+    var jsondata = localStorage.getItem(ID2+"_weather");
+    //alert(jsondata);
     var parsed_json = eval('(' + jsondata + ')');
-
-    alert(bdata);
+    //alert(parsed_json);
+    
     var cutoff = parseInt("16");
     var location = parsed_json['location']['city'];
     //alert(location);
@@ -1258,8 +1301,8 @@ function drawWeather(ID) {
     // }
     //  var country = parsed_json['location']['country'];
     //alert("saved= " + json_data);
-    var posy = 54;
-    var posyt = 65;
+    var posy = 4; //54;
+    var posyt = 15; //65;
     var canvas = document.getElementById('weather');
     canvas.width = 350;
     canvas.height = 1500;
@@ -1603,16 +1646,116 @@ var Arrow = function (o) {
     };
 };
 
+var weather_deets = {
+        wdata: []
+    };
 
 
-function getW() {
+
+function getW(latlng,ID) {
     //var loc = "56.052,-2.732";
-    var loc = localStorage.getItem('loc');
+    var loc = latlng;
+    //alert(latlng);
+    //var latlngarr = latlng.split(",");
+    //alert(latlngarr);
+    $('#location').append("Checking weather for " + ID + "</br>");
+    var lat = latlng[0];
+    var lng = latlng[1];
+    if (ID == 45732999488) {
+       lat = 53.55;
+       lng = -1.5;
+       latlng = "53.55,-1.5";
+    }
+    var wdata = localStorage.getItem('weatherdata');
+    //alert("st:" + lat);
+    //var callW = true;
+    if (wdata != null) {
+    var wdata_json = eval('(' + wdata + ')');
+    //var wdata_js = JSON.parse(wdata);
+    //var match = getObjects(wdata, "lat", lat);
+    var ct = localStorage.getItem('weatherdata_ct');
+    checkWeather(latlng, ct, ID);
+    
+
+        } else {
+        
+         callWeather(latlng,ID);
+        }
+    }
+
+function checkWeather(latlng, ct, ID) {
+    var wdata = localStorage.getItem('weatherdata');
+    var wdata_json = eval('(' + wdata + ')');
+    $('#location').append("Checking weather2 for " + latlng + "</br>");
+    var callW = true;
+    var lat = latlng[0];
+    var lng = latlng[1];
+   // alert(ct);
+    $.each(wdata_json.wdata, function (i, wd) {
+           if (wd.lat == lat) {//and lng and epoch
+              callW = false;
+             // alert(ct + "match" + lat + ID);
+            }
+            ct--;
+                if (ct == 0) {
+               // alert("return" + callW + ID);
+                
+                if (callW == true) { //no match
+                    callWeather(latlng,ID);
+                    $('#location').append("Getting weather for " + ID + "</br>");
+                    } else {
+                    $('#location').append("Not getting weather for " + ID + "</br>");
+                }
+    
+    
+            }
+            
+            
+
+            
+            
+    });   
+        
+    //return callW;
+    
+}
+
+function countWdata() {
+ var wdata = localStorage.getItem('weatherdata');
+ var wdata_json = eval('(' + wdata + ')');
+   var ct = 0; 
+    $.each(wdata_json.wdata, function (i, wd) {
+           
+            ct++;
+                           
+    });   
+        localStorage.setItem('weatherdata_ct', ct);
+    $('#location').append("Weather data count = " + ct + "</br>");
+
+}
+
+
+function callWeather(latlng,ID)  {
+    var lat = latlng[0];
+    var lng = latlng[1];
+    var epoch = Math.round(new Date().getTime() / 1000);
+     weather_deets.wdata.push({
+        "ID": ID,
+        "lat": lat,
+        "lng": lng, 
+        "timestamp": epoch
+    });
+    var jsondeets = JSON.stringify(weather_deets);
+    $('#location').append("Writing Weather data = " + ID + "</br>");
+    localStorage.setItem('weatherdata', jsondeets);
+    countWdata();
+    //localStorage.getItem('loc');
     //"37.833,-122.483";
     //"56.052,-2.732";
+   // alert(latlng);
     $.ajax({
         type: "GET",
-        url: "http://api.wunderground.com/api/bf45926a1b878028/hourly/geolookup/q/" + loc + ".json",
+        url: "http://api.wunderground.com/api/bf45926a1b878028/hourly/geolookup/q/" + latlng + ".json",
         //56.052,-2.732
         //url: "json.txt",
         //dataType: "html",
@@ -1622,8 +1765,8 @@ function getW() {
 
             var jsontext = JSON.stringify(json);
             var location = json['location']['city'];
-            $('#location').append("Retrieved weather for " + location + "</br>");
-            localStorage.setItem('wdata1', jsontext);
+            $('#location').append("Retrieved weather for " + location + "  " + ID + "</br>");
+            localStorage.setItem(ID+'_weather', jsontext);
             var epoch = Math.round(new Date().getTime() / 1000)
             var timenow = new Date();
             var hour_now = timenow.getHours();
@@ -1643,6 +1786,8 @@ function getW() {
     });
 
 }
+
+
 
 //https://maps.googleapis.com/maps/api/staticmap?size=400x400&path=weight:3%7Ccolor:orange%7Cenc:polyline_data&key=YOUR_API_KEY
 

@@ -101,11 +101,16 @@ function checkData() {
        // alert("no data");
     } else {
        // alert("data");
+       countWdata();
         var data = localStorage.getItem("userdata");
         $('#status_msgs').append("data </br> " + data);
+        var ct = localStorage.getItem(ct);
         //$('#settings').hide();
         initBtns();
-        drawTable();
+        //parse(ct,"act");
+        getAct();
+        //drawTable();
+        //$('#act_table').show();
     }
 
 
@@ -125,7 +130,7 @@ function checkData() {
         $('#get_activities').show();
     }
 
-    getW();
+    //getW();
 
 
 
@@ -140,6 +145,7 @@ function getAct() {
 function getNearby() {
     $('#act_table_header').hide();
     $('#act_table').hide();
+    $('#my_activities').hide();
     $('#seg_nearby').show();
     $('#seg_data').hide();
     // getSegsbyBounds();
@@ -163,23 +169,32 @@ function drawTable() {
     $.each(j2.segs, function (i, seg) {
         //poly3(seg.ID,i,seg.name);
         midhtml = midhtml + "<li onclick=\"poly2(" + seg.ID + "," + i + ",'" + seg.name + "')\"><i class=\"read\"></i><p>" + seg.name + "</p><p class=\"message\">" + seg.dist + "m</p>" +
-        "<div class=\"actions\" id=\"stars_" + seg.ID + "\"></div></li>";
+        "<div class=\"actions\" id=\"stars_" + seg.ID + "\"><p>Calc</p></div></li>";
             act_ct++;
+            getW(seg.latlng,seg.ID);
     });
+    var ht = parseInt((act_ct * 48) + 56);
+    $('#tableback').height(ht);
+
     var ref_btn = "<div class=\"minihead\"><button class=\"btn btn-primary\" onclick=\"stAct()\">Refresh My Activities</button></div>";
     $('#actMsgs').html(act_ct + " Activities loaded.");
     $('#act_table').html(top + midhtml + "</ul></div></div>");
      $.each(j2.segs, function (i, seg) {
+         
+     
        
        var elementID = 'canvas' + seg.ID; // Unique ID
+        $('#stars_' + seg.ID).html("<p>stars</p>");
 
+       //alert(seg.latlng);
+            
 
        //alert(elementID);
 $('<canvas>').attr({
     id: elementID
 }).css({
     width: '250px',
-    height: '20px'
+    height: '30px'
 }).appendTo('#stars_' + seg.ID);
 
 var canvas = document.getElementById(elementID); 
@@ -202,7 +217,8 @@ var canvas = document.getElementById(elementID);
         //ctx.fillStyle = "#FF0000";
         //ctx.fillRect(0, 10, 100, 15);
         //alert("i=" + seg.ID + "   " + seg.poly);
-        drawIDstars(seg.ID,ctx,i);
+//        drawIDstars(seg.ID,ctx,i); //here
+       
        
     });
     // alert(midhtml);
@@ -213,6 +229,7 @@ function stConn2() {
     var strava_deets = {
         deets: []
     };
+    
     $('#status_msgs').show();
     $('#status_msgs').append("</br > Connecting to Strava ...");
     OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8')
@@ -226,16 +243,19 @@ function stConn2() {
             strava_deets.deets.push({
                 "firstname": data.firstname,
                 "lastname": data.lastname,
+                "city": data.city,
+                "state": data.state
 
 
             });
+            
             var jsondeets = JSON.stringify(strava_deets);
             localStorage.setItem('userdata', jsondeets);
 
             $('#status_msgs').append("</br > " + data.lastname);
             $('#AuthApp').show();
             $('#UnAuthApp').hide();
-            getAct();
+            stAct();
             // do some stuff with result
         });
 
@@ -260,11 +280,12 @@ function stTest2() {
 
 var timer1
 
-function parse() {
+function parse(ct,type) {
+
+if (type == "act") {
+
 var seg_data =localStorage.getItem('segdata');
-//var data = JSON.stringify(seg_data);
 var j2 = eval('(' + seg_data + ')');
-var ct = 5;
 var dist = j2.segs[0].dist;
 var index = 0;
     $.each(j2.segs, function (i, seg) {
@@ -277,25 +298,50 @@ var index = 0;
       var timer = setInterval(function () { startDecode(poly,ID,i,index) }, 1000);
       //var speed = 1000;
       //var timer = setInterval(startDecode(poly,ID,i), speed);
-      
       index++;
-      //startDecode(poly,ID,i);
-      
+      //startDecode(poly,ID,i);      
       function startDecode(poly,ID,i,index) {
     clearInterval(timer);
     //index++;
    // alert(i + " start ... " + ID + " idx=" + index);
     decodepoly(poly,ID);
-        
-    
-    //if (index >= 4) {
-    //    alert(index +" clear ,,, " +i);
-    //    clearInterval(timer);
-   // }
-        
+         
         }
       
     });
+    getAct();
+    //drawTable();
+    
+    } else {
+    
+    var seg_data =localStorage.getItem('seg_loc_data');
+var j2 = eval('(' + seg_data + ')');
+//alert(seg_data);
+var index = 0;
+    $.each(j2.points, function (i, seg) {
+       
+      var name = i;
+      
+      var poly = seg.points; //seg[i]['map']['summary_polyline'];
+      var ID = seg.PID;
+    //  alert("start " + poly + ID);
+      var timer = setInterval(function () { startDecode(poly,ID,i,index) }, 1000);
+      //var speed = 1000;
+      //var timer = setInterval(startDecode(poly,ID,i), speed);
+      index++;
+      //startDecode(poly,ID,i);      
+      function startDecode(poly,ID,i,index) {
+    clearInterval(timer);
+    //index++;
+ //  alert(poly + " start ... " + ID + " idx=" + index);
+    decodepoly(poly,ID);
+         
+        }
+      
+    });
+    //getAct();
+    
+    }
 
 
 }
@@ -327,7 +373,8 @@ function stAct() {
                     "ID": data[i]['id'],
                     "poly": data[i]['map']['summary_polyline'],
                     "dist": data[i]['distance'],
-                    "egain": data[i]['total_elevation_gain']
+                    "egain": data[i]['total_elevation_gain'],
+                    "latlng": data[i]['end_latlng']
                     //alert(poly + "hij" + ID);
                 });
                 
@@ -339,10 +386,11 @@ function stAct() {
             });
             var jsonsegs = JSON.stringify(strava_segs);
             localStorage.setItem('segdata', jsonsegs);
-           
+            localStorage.setItem('actct',ct);
             
             alert("Retrieved " + ct + " Activities.");
             //drawTable();
+            parse(ct,"act");
 
         });
 
@@ -353,16 +401,17 @@ function clearCache() {
     $('#status_msgs').show();
     $('#status_msgs').append("<br/> clearing ...");
     //  OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
-    OAuth.clearCache();
-
+    //OAuth.clearCache();
+    localStorage.removeItem('weatherdata');
     showLocal();
 }
 
 function showLocal() {
     $('#status_msgs').show();
     for (var i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i) == 'weatherdata') {
         $('#status_msgs').append("</br > " + localStorage.key(i) + " data: " + localStorage.getItem(localStorage.key(i)));
-
+        }
         // do something with localStorage.getItem(localStorage.key(i));
     }
     // var straval = localStorage.getItem('oauthio_provider_strava');
