@@ -101,6 +101,10 @@ function checkData() {
        // alert("no data");
     } else {
        // alert("data");
+       //clearCache();
+       $('#table_calc_back2').height(200);
+       $('#rem_info').show();
+       //$('#hr1').button('toggle');
        countWdata();
         var data = localStorage.getItem("userdata");
         $('#status_msgs').append("data </br> " + data);
@@ -179,50 +183,21 @@ function drawTable() {
     var ref_btn = "<div class=\"minihead\"><button class=\"btn btn-primary\" onclick=\"stAct()\">Refresh My Activities</button></div>";
     $('#actMsgs').html(act_ct + " Activities loaded.");
     $('#act_table').html(top + midhtml + "</ul></div></div>");
-     $.each(j2.segs, function (i, seg) {
-         
      
-       
-       var elementID = 'canvas' + seg.ID; // Unique ID
-        $('#stars_' + seg.ID).html("<p>stars</p>");
-
-       //alert(seg.latlng);
-            
-
-       //alert(elementID);
-$('<canvas>').attr({
-    id: elementID
-}).css({
-    width: '250px',
-    height: '30px'
-}).appendTo('#stars_' + seg.ID);
-
-var canvas = document.getElementById(elementID); 
-
-
-
-      //  var canvas = document.createElement('stars_' + seg.ID);
-   //     document.body.appendChild(canvas);
-         if (!canvas) {
-        alert('Error: Cannot find the canvas element!');
-        return;
-      }
-
-      if (!canvas.getContext) {
-        alert('Error: Canvas context does not exist!');
-        return;
-      }
-        //var canvas2 = document.getElementById('stars_' + ID);
-        var ctx = canvas.getContext('2d');
-        //ctx.fillStyle = "#FF0000";
-        //ctx.fillRect(0, 10, 100, 15);
-        //alert("i=" + seg.ID + "   " + seg.poly);
-//        drawIDstars(seg.ID,ctx,i); //here
-       
-       
-    });
     // alert(midhtml);
     
+}
+
+function displayStars() {
+    var json = localStorage.getItem('segdata');
+    var j2 = eval('(' + json + ')');
+    $('#info_line').html("<h5>Calculating activity ratings for selected wind conditions</h5>");
+    $.each(j2.segs, function (i, seg) {
+        $('#stars_' + seg.ID).html("<p>Calculating ... </p>");
+        calcStarsInline(seg.ID,3);
+              
+    });
+
 }
 
 function stConn2() {
@@ -403,6 +378,7 @@ function clearCache() {
     //  OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
     //OAuth.clearCache();
     localStorage.removeItem('weatherdata');
+    localStorage.removeItem('weatherdata_ct');
     showLocal();
 }
 
