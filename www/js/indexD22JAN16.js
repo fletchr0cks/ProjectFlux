@@ -545,16 +545,6 @@ function backMap() {
 }
 
 function backAct() {
-var canvas = document.getElementById('weather');
-    canvas.width = 350;
-    canvas.height = 1500;
-    canvas.style.width = '350px';
-    canvas.style.height = '1500px';
-    var ctx2d = canvas.getContext('2d');
-    ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
-    ctx2d.fillStyle = "rgba(255, 255, 255, 0.0)";
-    ctx2d.fillRect(0, 0, 350, 2000);
-
    $('#act_table_header').show();
    $('#table_calc_area2').show();
     $('#act_table').show();
@@ -631,26 +621,19 @@ function poly2(ID, i, name) {
     var j2 = eval('(' + json + ')');
     var dist = j2.segs[i].dist;
     var egain = j2.segs[i].egain;
-    //var Lbbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>";
+    var Lbbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>";
     var Backbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"backAct()\">Back</button>";
     $('#seg_title').html("<h5>" + name + "</h5>");
     $('#seg_dist').html("<p><bold>" + dist + "</bold></p>");
     $('#seg_egain').html("<p><bold>" + egain + "</bold></p>");
-    //$('#leaderboardBtn').html(Lbbtn);
+    $('#leaderboardBtn').html(Lbbtn);
     $('#backBtn').html(Backbtn);
      //$('#seg_details').html(top_html + side_html);
     var pl = j2.segs[i].poly;
-    $('#data_pills').html("<div class=\"timebtns\"><div class=\"btn-group btn-group-s\" role=\"group\">" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"wpill\">Weather</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"ewpill\">Efforts</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"lpill\">Leaderboard</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"spill\">Split</button>" +
-  "</div></div>");
-
     drawMap(pl);
     drawChart(ID);
     drawWeather(ID);
-    //$('#location').append(ID + "poly2" + pl +"</br>");
+    $('#location').append(ID + "poly2" + pl +"</br>");
     p1 = 0
     p2 = 0
     p3 = 0
@@ -682,16 +665,14 @@ function polySegs(ID, i, name) {
     var json = localStorage.getItem('all_seg_efforts');
     var j2 = eval('(' + json + ')');
     var dist = j2.segs[i].dist;
-    //var egain = j2.segs[i].egain;
+    var egain = j2.segs[i].egain;
     var Lbbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>";
-    var Sebtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showEfforts(" + ID +")\">Segment Efforts</button>";
     var Backbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"backAct()\">Back</button>";
     $('#seg_title').html("<h5>" + name + "</h5>");
     $('#seg_dist').html("<p><bold>" + dist + "</bold></p>");
-    $('#seg_egain').html("<p><bold></bold></p>");
+    $('#seg_egain').html("<p><bold>" + egain + "</bold></p>");
     $('#leaderboardBtn').html(Lbbtn);
     $('#backBtn').html(Backbtn);
-    $('#seBtn').html(Sebtn);
      //$('#seg_details').html(top_html + side_html);
     var pl = localStorage.getItem(ID+"_poly");
     //var pl = j2.segs[i].poly;
@@ -1370,17 +1351,15 @@ function drawWeather(ID) {
     //var bdata = eval('(' + bearing_json + ')');
     //readW();
     //alert(bdata);
-   // alert(ID+"_weather");
+    alert(ID+"_weather");
     var jsondata = localStorage.getItem(ID+"_weather");
-   // alert(jsondata);
+    alert(jsondata);
     var parsed_json = eval('(' + jsondata + ')');
     //alert(parsed_json);
     
     var cutoff = parseInt("16");
-    var country = parsed_json['location']['country'];
     var location = parsed_json['location']['city'];
     //alert(location);
-    $('#wtitle').html("Weather for " + location + ", " + country + " (1 hour 40 minutes ago)");
     //var theDatas = new Lawnchair('data');
     var timenow = new Date();
     var hour_now = timenow.getHours();
@@ -1645,9 +1624,9 @@ var bearing_store = ID+"_array";
     var bdata = localStorage.getItem(bearing_store);
     //var bdata = eval('(' + bearing_json + ')');
     //readW();
-  //  alert(bdata);
+    //alert(bdata);
     var jsondata = localStorage.getItem(ID+"_weather");
- //   alert(jsondata);
+  //  alert(jsondata);
     var parsed_json = eval('(' + jsondata + ')');
   //  alert(bdata + jsondata);
   var star_avg= 0;
@@ -1802,129 +1781,271 @@ var Arrow = function (o) {
 
 
 
-function getW(latlng,ID) {
 
-    var loc = latlng;
-    $('#location').append("Checking weather for " + ID + "</br>");
+function getWo(latlng,ID) {
+countWdata();
+    $('#location').append("Checking weather for " + ID + " " + latlng + "</br>");
     var lat = latlng[0];
     var lng = latlng[1];
-    if (ID == 45732999488) {
-       lat = 53.55;
-       lng = -1.5;
-       latlng = "53.55,-1.5";
-    }
+     var testlat = parseInt(lat - 4);
+   var epoch = Math.round(new Date().getTime() / 1000);
+    
     var wdata = localStorage.getItem('weatherdata');
     if (wdata != null) {
     var wdata_json = eval('(' + wdata + ')');
-    var ct = localStorage.getItem('weatherdata_ct');
-        checkWeather(latlng, ct, ID);
-    
-
-        } else {
+   
+    var time = 0
+    $.each(wdata_json.wdata, function (i, wd) {
+    $('#location').append("found weather for " + wd.ID + "</br>");
+ var weather_deets = {
+        wdata: []
+    };
+        var wdlat = wd.lat;
+        var wdID = wd.ID;
+        if (parseInt(testlat) - parseInt(wdlat - 2) < -2) {
         
-         callWeather(latlng,ID);
+            $('#location').append("Getting weather for " + ID + "</br>");
+            callWeather(latlng,ID,true);
+        
+        
+        } else { //copy weather
+        weather_deets.wdata.push({
+            "ID": ID,
+            "lat": lat,
+            "lng": lng, 
+            "timestamp": epoch
+
+        });
+          $('#location').append("Not getting weather for " + ID + "</br>");
+                    var toID = ID;
+                    var fromID = wdID;
+                    copyWeather(fromID,toID);
+        
+         setTimeout(function() {
+//alert('paused');
+//getWo(seg.latlng,seg.ID);
+ 
+   
+updateWdata(ID,lat,lng,epoch)
+$('#location').append(i + " Paused: " + ID + "</br>");
+    }, time);
+    time += 1000;
+    
+         
+         
+         function updateWdata(ID,lat,lng,epoch) {
+         
+         
+         
+          
+        
+         //clearTimeout(timer1);
+         var wdataC = localStorage.getItem('weatherdata');
+         var wdata_json = eval('(' + wdataC + ')');
+         var ct = localStorage.getItem('weatherdata_ct');
+     if (ct == null) {
+     ct = 0;
+     }
+//        var wdata2 = eval('(' + wdataC + ')');
+//        var wdata3 = wdata2.wdata;
+//        var wdataf = JSON.stringify(wdata3);
+//    var wdataf1 = wdataf.replace("[","");
+//    wdataf1 = wdataf1.replace("]","");
+    //var wdata4 = JSON.stringify(wdataf1);
+//    $('#location').append("copied wdata " + ID + "</br>");
+    // weather_deets1.wdata.push(eval('(' + wdataf1 + ')'));
+    //var ct = 1;
+     $.each(wdata_json.wdata, function (i, wd1) {
+        weather_deets.wdata.push({
+            "ID": wd1.ID,
+            "lat": wd1.lat,
+            "lng": wd1.lng, 
+            "timestamp": wd1.timestamp
+
+        });
+        
+      //  ct--;
+        alert(ct + " " + ID + " " + wd1.ID);
+     });
+     
+    // if (ct == 0) {
+     
+     
+     
+    //$('#location').append("Merge: " + wdataf1 + "</br>");
+ //var wdx1 = eval('(' + wdataC + ')');
+ //   var wdx1 = weather_deets.wdata
+ //   var wdx = JSON.stringify(wdx1);
+ //   var wdx2 = wdx.replace("[","");
+ //   wdx2 = wdx2.replace("]","");
+ //   var finalObj = wdx2.concat(wdataf1);
+  // $('#location').append("wuth: "+ wdx2 + "</br>");
+  // $('#location').append("merged: "+ finalObj + "</br>"); 
+   //var wdx5 = eval('(' + finalObj + ')');
+   //weather_deets.wdata.push(finalObj)
+    //+push existing
+    var jsondeets = JSON.stringify(weather_deets);
+    $('#location').append("Saved new Weather data = " + ID  + weather_deets+ "</br>");
+    localStorage.setItem('weatherdata', jsondeets);
+    $('#location').append("1 writing weather for " + ID + " " + latlng + "</br>");
+    countWdata();
+  //  }
+
+}
+        
         
         }
-    }
+    
+    });
+    
+        
+                                                        
+    
+   
 
-function checkWeather(latlng, ct, ID) {
-    var wdata = localStorage.getItem('weatherdata');
-    var wdata_json = eval('(' + wdata + ')');
-    $('#location').append("Checking weather2 for " + latlng + "</br>");
-    var callW = true;
-    var lat = latlng[0];
+        } else {
+      var weather_deetsn = {
+        wdata: []
+    };
+    
+    weather_deetsn.wdata.push({
+            "ID": ID,
+            "lat": lat,
+            "lng": lng, 
+            "timestamp": epoch
+    
+    });
+    var jsondeets = JSON.stringify(weather_deetsn);
+    //$('#location').append("Saved new Weather data = " + ID + "</br>" + weather_deets);
+    localStorage.setItem('weatherdata', jsondeets);
+    $('#location').append("2 writing weather for " + ID + " " + latlng + "</br>");
+        
+        }
+        
+}
+
+function getW(latlng,ID) {
+ var lat = latlng[0];
     var lng = latlng[1];
+   var testlat = parseInt(lat - 4);
+   var epoch = Math.round(new Date().getTime() / 1000);
+//if (ID == 457364721) {
+       lat = 50.55;
+       //lng = -1.5;
+       //latlng = "[50.55,-1.5]";
+  //     testlat = 46;
+    //}
+      var weather_deets = {
+        wdata: []
+    };
+
+    var wdata = localStorage.getItem('weatherdata');
+    if  (wdata != null) {
+    var wdata_json = eval('(' + wdata + ')');
+    $('#location').append(wdata_json + "  1 Checking weather for " + latlng + "</br>");
+    //var callW = true;
+   var index = 0;
    
     $.each(wdata_json.wdata, function (i, wd) {
-           if (wd.lat > lat) {//and lng and epoch
-              callW = false;
-            //  alert(ct + "match" + lat + ID);
-            }
-            ct--;
-                if (ct <= 0) {
-              //  alert("return" + callW + ID);
-                
-                if (callW == true) { //no match
+    $('#location').append("found weather for " + wd.ID + "</br>");
+
+    var wdlat = wd.lat;
+    var wdID = wd.ID;
+     var timer4 = setInterval(function () { callWeather1(latlng,lat,lng,wdlat,wdID,i,index) }, 4000);
+     index++;
+                    function callWeather1(latlng,lat,lng,wdlat,wdID,i,index) {
+                    clearInterval(timer4);
+     $('#location').append(wdID + "   " + parseInt(testlat)+ " minus " + parseInt(wdlat - 2) + " = " + parseInt(parseInt(testlat)-parseInt(parseInt(wdlat - 2))));
+           if (parseInt(testlat) - parseInt(wdlat - 2) < -2) {    //and lng and epoch
                     
+                     var wdataC = localStorage.getItem('weatherdata');
+    var wdata2 = eval('(' + wdataC + ')');
+    var wdata3 = wdata2.wdata
+    var wdataf = JSON.stringify(wdata3);
+    var wdataf1 = wdataf.replace("[","");
+    wdataf1 = wdataf1.replace("]","");
+    //var wdata4 = JSON.stringify(wdataf1);
+    $('#location').append("calling wdata " + wdataf1 + "</br>");
+     weather_deets.wdata.push(eval('(' + wdataf1 + ')'));
+    // $.each(wdata_json.wdata, function (i, wd1) {
+       weather_deets.wdata.push({
+            "ID": ID,
+            "lat": lat,
+            "lng": lng, 
+            "timestamp": epoch
+   // });
+    
+    });
+    
+    var jsondeets = JSON.stringify(weather_deets);
+    //$('#location').append("Saved new Weather data = " + ID + "</br>" + weather_deets);
+    localStorage.setItem('weatherdata', jsondeets);
+           
+                                                        
                     $('#location').append("Getting weather for " + ID + "</br>");
-                    callWeather(latlng,ID);
-                  //  alert("ct="+ct);
-                    } else {
+                    callWeather(latlng,ID,true);
+                    
+                    
+            } else {
+                        
                     $('#location').append("Not getting weather for " + ID + "</br>");
-                    var toID = ID;
-                    var fromID = wd.ID;
-                    copyWeather(fromID,toID,lat,lng);
+                                         var toID = ID;
+                    var fromID = wdID;
+                    copyWeather(fromID,toID);
+
+                    
+                     var wdataC = localStorage.getItem('weatherdata');
+    var wdata2 = eval('(' + wdataC + ')');
+    var wdata3 = wdata2.wdata
+    var wdataf = JSON.stringify(wdata3);
+    var wdataf1 = wdataf.replace("[","");
+    wdataf1 = wdataf1.replace("]","");
+    //var wdata4 = JSON.stringify(wdataf1);
+    $('#location').append("copied wdata " + wdataf1 + "</br>");
+     weather_deets.wdata.push(eval('(' + wdataf1 + ')'));
+    // $.each(wdata_json.wdata, function (i, wd1) {
+    alert("b" + JSON.stringify(weather_deets));
+       weather_deets.wdata.push({
+            "ID": ID,
+            "lat": lat,
+            "lng": lng, 
+            "timestamp": epoch
+   // });
+    
+    });
+    alert("a"+ JSON.stringify(weather_deets));
+    var jsondeets = JSON.stringify(weather_deets);
+    //$('#location').append("Saved new Weather data = " + ID + "</br>" + weather_deets);
+    localStorage.setItem('weatherdata', jsondeets);
+
+    $('#location').append("updated Weather data = " + ID + "</br>" + JSON.stringify(weather_deets)+ "</br>");
+    
+                   
                 }
     
-    
+
             }
             
-            
-
-            
+        
             
     });   
+    
+    } else {
+        callWeather(latlng,ID,false);        
+        }
         
     //return callW;
     
 }
 
-function copyWeather(fromID,toID,lat,lng) {
+function copyWeather(fromID,toID) {
+//fromID = "421422146"; //take this out andcall the weather properly
+//alert(fromID + " " + toID);
 var jsondata = localStorage.getItem(fromID+"_weather");
+//alert(jsondata);
 localStorage.setItem(toID+'_weather', jsondata);
 $('#location').append("Copied weather from " + fromID + " to " + toID + "</br>");
-var epoch = Math.round(new Date().getTime() / 1000);
- var weather_deets = {
-        wdata: []
-    };
-     //alert(ct);
-     var ct = localStorage.getItem('weatherdata_ct');
-     if (ct == null) {
-     ct = 0;
-     }
-   
-    var ct2 = 0;
-    var wdata = localStorage.getItem('weatherdata');
-  //  if (wdata != null) {
-        var wdata_json = eval('(' + wdata + ')');
-         
-        $.each(wdata_json.wdata, function (i, wd) {
-           
-            weather_deets.wdata.push({
-            "ID": wd.ID,
-            "lat": wd.lat,
-            "lng": wd.lng, 
-            "timestamp": wd.timestamp
-                        //ct--;
-        });  
-          // alert("pushed  "+ ID + "ct=" + ct + "ct2=" + ct2);
-
-      //  var jsondeets = JSON.stringify(weather_deets);
-     //   $('#location').append("Writing Weather data 1 = " + ID + "</br>");
-     //   localStorage.setItem('weatherdata', jsondeets);
-     //   countWdata();
-        ct--;
-    //alert(ct2 + "i=" + i + jsondeets);
-      //  if (ct == i) {
-        if (ct == 0) {
-    weather_deets.wdata.push({
-        "ID": toID,
-        "lat": lat,
-        "lng": lng, 
-        "timestamp": epoch
-    });
-            //alert("pushed last  "+ ID + "ct=" + ct + "ct2=" + ct2);
-            var jsondeets = JSON.stringify(weather_deets);
-      
-      $('#location').append("Copied weather data " + toID + "</br>");
-    localStorage.setItem('weatherdata', jsondeets);
-
-        countWdata();
-        
-        }
-        
-           });  
-
+countWdata();
 }
 
 function countWdata() {
@@ -1946,97 +2067,48 @@ function countWdata() {
 
  }
 
-function callWeather(latlng,ID)  {
+function callWeather(latlng,ID,wd)  {
     var lat = latlng[0];
     var lng = latlng[1];
     var epoch = Math.round(new Date().getTime() / 1000);
-    
     var weather_deets = {
         wdata: []
     };
-     //alert(ct);
-     var ct = localStorage.getItem('weatherdata_ct');
-     if (ct == null) {
-     ct = 0;
-     }
-   
-    var ct2 = 0;
-    var wdata = localStorage.getItem('weatherdata');
-    if (wdata != null) {
-        var wdata_json = eval('(' + wdata + ')');
-         
-        $.each(wdata_json.wdata, function (i, wd) {
-           
-            weather_deets.wdata.push({
-            "ID": wd.ID,
-            "lat": wd.lat,
-            "lng": wd.lng, 
-            "timestamp": wd.timestamp
-                        //ct--;
-        });  
-          // alert("pushed  "+ ID + "ct=" + ct + "ct2=" + ct2);
-
-     //   var jsondeets = JSON.stringify(weather_deets);
-     //   $('#location').append("Writing Weather data 1 = " + ID + "</br>");
-     //   localStorage.setItem('weatherdata', jsondeets);
-     //   countWdata();
-        ct--;
-    //alert(ct2 + "i=" + i + jsondeets);
-      //  if (ct == i) {
-        if (ct == 0) {
+    
+if (wd == false) { //no wdata
     weather_deets.wdata.push({
-        "ID": ID,
-        "lat": lat,
-        "lng": lng, 
-        "timestamp": epoch
+            "ID": ID,
+            "lat": lat,
+            "lng": lng, 
+            "timestamp": epoch
     });
-            //alert("pushed last  "+ ID + "ct=" + ct + "ct2=" + ct2);
-            var jsondeets = JSON.stringify(weather_deets);
-       RealCallWeather(latlng,ID);
-      $('#location').append("Writing Weather data 2 = " + ID + "</br>");
-    localStorage.setItem('weatherdata', jsondeets);
- //   $('#location').append("Retrieved weather for " + ID + "</br>");
- //           localStorage.setItem(ID+'_weather', "weather here");
-
-        countWdata();
-     //   alert("push=" + wd.ID);
-        } else {
-     //    alert("not push=" + wd.ID);
-        }         
-         
-         //ct--;
-        
-       });  
-    
-    } else {
-   // alert("push " + ID);
-        weather_deets.wdata.push({
-        "ID": ID,
-        "lat": lat,
-        "lng": lng, 
-        "timestamp": epoch
-    });
-    
     var jsondeets = JSON.stringify(weather_deets);
-     RealCallWeather(latlng,ID);
-    $('#location').append("Writing Weather data = " + ID + "</br>");
+    $('#location').append("Saved new Weather data = " + ID + "</br>" + weather_deets);
     localStorage.setItem('weatherdata', jsondeets);
-    //alert("get weather 1   " +ID + weather_deets);
- //   $('#location').append("Retrieved weather for  " + ID + "</br>");
-    //        localStorage.setItem(ID+'_weather', "start weather here");
 
-    countWdata();
-    }
-    
-   // alert(wdata_json);
+   RealCallWeather(latlng,ID);
+
+} else {
+var index = 0;
+     var timer5 = setInterval(function () { callWeather2(latlng,lat,lng,wdlat,wdID,i,index) }, 4000);
+     index++;
+     
+    function callWeather2(latlng,lat,lng,wdlat,wdID,i,index) {
+        clearInterval(timer5);
         
-    //localStorage.getItem('loc');
-    //"37.833,-122.483";
-    //"56.052,-2.732";
-   // alert(latlng);
+   RealCallWeather(latlng,ID);
+   
+   }
+    
+}
+//      var timer4 = setTimeout(function () { addData }, 1000);   
+  //                  function addData() {
+    //                clearTimeout(timer4);
+   
 }   
    function RealCallWeather(latlng,ID) {
-   
+      alert(latlng + " real " + ID);
+  
     $.ajax({
         type: "GET",
         url: "http://api.wunderground.com/api/bf45926a1b878028/hourly/geolookup/q/" + latlng + ".json",
@@ -2048,20 +2120,17 @@ function callWeather(latlng,ID)  {
             //var jsontxt = eval('(' + json + ')');
 
             var jsontext = JSON.stringify(json);
+           // alert(jsontext);
             var location = json['location']['city'];
             $('#location').append("Retrieved weather for " + location + "  " + ID + "</br>");
             localStorage.setItem(ID+'_weather', jsontext);
             countWdata();
             var epoch = Math.round(new Date().getTime() / 1000)
-            var timenow = new Date();
-            var hour_now = timenow.getHours();
-            var minute_now = timenow.getMinutes();
-            var today = timenow.getDate();
-
-
+            
         },
         error: function (xhr, error) {
             console.debug(xhr); console.debug(error);
+            alert(error);
         },
         complete: function () {
             //load weather
@@ -2071,6 +2140,8 @@ function callWeather(latlng,ID)  {
     });
 
 }
+
+
 
 //https://maps.googleapis.com/maps/api/staticmap?size=400x400&path=weight:3%7Ccolor:orange%7Cenc:polyline_data&key=YOUR_API_KEY
 

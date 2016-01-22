@@ -77,6 +77,10 @@ td.alnright { text-align: right; }
 	margin-left:10px;
 }
 
+.whitec {
+    color:white;
+}
+
 /***********BLOCKS & WRAPS***********/
 
 /*--- Dash Unit / Used in Dashboard page ---*/
@@ -275,7 +279,7 @@ td.alnright { text-align: right; }
 	background-image:url('../img/sep-half.png');
 	background-color: #3d3d3d;
 	color:white;
-	height:120px;
+	height:80px;
 }
 
 .small-unit:hover {
@@ -439,15 +443,21 @@ textarea {
 
 .box2 {
   display: inline-block;
-  width: 100px;
-  height: 20px;
-  vertical-align: top
+  text-align:center;
+  width: 140px;
+  height: 40px;
+  vertical-align: top;
+  padding:10px;
+  font-size: 14px;
+  color: #b2c831;
 }
 
 .box3 {
   display: inline-block;
-  width: 120px;
-  height: 20px
+  width: 100px;
+  height: 40px;
+padding:10px;
+  font-size: 14px
 }
 
 .progress-b {
@@ -468,6 +478,7 @@ textarea {
 
 
 .info-user {
+display: block;
 	text-align:center;
 	font-size: 24px;
 	color: #b2c831;
@@ -582,12 +593,22 @@ digiclock {
     width: 36px;
 }
 .framemail .window .mail li p {
-    font: 13px/24px;
+    font-size: 14px;
     font-family: 'Open Sans', sans-serif;
     left: 0px;
     position: absolute;
     top: 3px;
+    color: #999;
 }
+
+.framemail .window .mail li p .seg_row {
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+    left: 20px;
+    position: absolute;
+    top: 3px;
+}
+
 .framemail .window .mail li .sender {
     color: #e9e8e8;
     font-weight: bold;
@@ -598,7 +619,7 @@ digiclock {
     text-overflow: ellipsis;
     top: 21px;  
     white-space: nowrap;
-    font-size: 10px
+    font-size: 14px
 }
 .framemail .window .mail li .message strong {
     color: #999;
