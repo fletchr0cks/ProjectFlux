@@ -554,20 +554,32 @@ var canvas = document.getElementById('weather');
     ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
     ctx2d.fillStyle = "rgba(255, 255, 255, 0.0)";
     ctx2d.fillRect(0, 0, 350, 2000);
-
+ $('#table_calc_area2').hide();
    $('#act_table_header').show();
-   $('#table_calc_area2').show();
+   $('#testbtns').hide();
+   $('#status_msgs').hide();
+   $('#table_calc_area2').hide();
+  // $('#table_calc_area2').show();
     $('#act_table').show();
     $('#my_activities').show();
     $('#seg_data').hide();
     $('#seg_weather').hide();
     $('#seg_details').hide();
+    $('#seg_leaderboard').hide();
+    $('#data_pills').hide();
 
 }
 
 function showLeader(ID) {    
     $('#seg_weather').slideUp();
+    $('#seg_efforts').slideUp();
     stLeader(ID);
+}
+
+function showEfforts(ID) {    
+    $('#seg_weather').slideUp();
+    $('#seg_leaderboard').slideUp();
+    stEffort(ID);
 }
 
 
@@ -575,6 +587,7 @@ function poly_map(ID, i, name) {
     $('#map_table').hide();
     $('#seg_data').show();
     $('#seg_weather').show();
+    $('#data_pills').show();
     $('#seg_details').show();
     $('#map_activities').hide();
     $('#map_canvas_nearby').hide();
@@ -624,6 +637,7 @@ function poly2(ID, i, name) {
     $('#act_table_header').hide();
     $('#seg_data').show();
     $('#seg_weather').show();
+     $('#data_pills').show();
     $('#seg_details').show();
     $('#static_map').fadeIn();
     //alert(i + name);
@@ -640,11 +654,9 @@ function poly2(ID, i, name) {
     $('#backBtn').html(Backbtn);
      //$('#seg_details').html(top_html + side_html);
     var pl = j2.segs[i].poly;
-    $('#data_pills').html("<div class=\"timebtns\"><div class=\"btn-group btn-group-s\" role=\"group\">" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"wpill\">Weather</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"ewpill\">Efforts</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"lpill\">Leaderboard</button>" +
-  "<button type=\"button\" class=\"btn btn-default btn-sm active\" id=\"spill\">Split</button>" +
+    $('#data_pills').html("<div class=\"btn-group btn-group-s\" role=\"group\">" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"wpill\" autofocus=\"true\" onclick=\"drawWeather(" + ID +")\">Weather</button>" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"ewpill\" onclick=\"showEfforts(" + ID +")\">Efforts</button>" +
   "</div></div>");
 
     drawMap(pl);
@@ -676,25 +688,34 @@ function polySegs(ID, i, name) {
     $('#act_table_header').hide();
     $('#seg_data').show();
     $('#seg_weather').show();
+     $('#data_pills').show();
     $('#seg_details').show();
     $('#static_map').fadeIn();
     //alert(i + name);
     var json = localStorage.getItem('all_seg_efforts');
     var j2 = eval('(' + json + ')');
     var dist = j2.segs[i].dist;
+    var kom_rank = j2.segs[i].kom_rank;
     //var egain = j2.segs[i].egain;
     var Lbbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>";
     var Sebtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showEfforts(" + ID +")\">Segment Efforts</button>";
     var Backbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"backAct()\">Back</button>";
     $('#seg_title').html("<h5>" + name + "</h5>");
     $('#seg_dist').html("<p><bold>" + dist + "</bold></p>");
-    $('#seg_egain').html("<p><bold></bold></p>");
-    $('#leaderboardBtn').html(Lbbtn);
+    $('#seg_egain').html("<p><bold>" + kom_rank + "</bold></p>");
+   // $('#leaderboardBtn').html(Lbbtn);
     $('#backBtn').html(Backbtn);
-    $('#seBtn').html(Sebtn);
+   // $('#seBtn').html(Sebtn);
      //$('#seg_details').html(top_html + side_html);
     var pl = localStorage.getItem(ID+"_poly");
     //var pl = j2.segs[i].poly;
+     $('#data_pills').html("<div class=\"btn-group btn-group-s\" role=\"group\">" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"wpill\" autofocus=\"true\" onclick=\"drawWeather(" + ID +")\">Weather</button>" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"ewpill\" onclick=\"showEfforts(" + ID +")\">Efforts</button>" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"lpill\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>" +
+  "<button type=\"button\" class=\"btn btn-info btn-sm\" id=\"spill\">Split</button>" +
+  "</div></div>");
+
     drawMap(pl);
     drawChart(ID);
     drawWeather(ID);
@@ -1363,6 +1384,11 @@ function drawIDstars(ID,ctx,i) {
 function drawWeather(ID) {
     //var bdata = localStorage.getItem(ID+"_array");
     var bearing_store = ID+"_array";
+    $('#seg_leaderboard').slideUp();
+    $('#seg_efforts').slideUp();
+    $('#seg_weather').slideDown();
+    $('#lb_table').hide();
+    $('#eff_table').hide();
     //var ID2 = "421422146";
     //alert(bearing_store);
     //var bdata = JSON.parse(localStorage.getItem(bearing_store)); //eval
@@ -1423,8 +1449,8 @@ function drawWeather(ID) {
         //ctx2d.restore();
 
         var imgi = new Image();
-        imgi.src = "http://icons.wxug.com/i/c/i/" + zone.icon + ".gif";
-        var ws = (parseInt(zone.wspd.english) * 6) + 10;
+        imgi.src = "http://icons.wxug.com/i/c/a/nt_snow.gif" //"http://icons.wxug.com/i/c/i/" + zone.icon + ".gif";
+        var ws = (parseInt(zone.wspd.english) * 5) + 10;
         var temp = (parseInt(zone.temp.metric) * 3) + 10;
         var winddeg = parseInt(zone.wdir.degrees);
 
@@ -1483,7 +1509,7 @@ function drawWeather(ID) {
         //alert(hour);
         ctx2d.font = '10px Arial';
         ctx2d.fillText(ampm, 30, posyt + 10);
-
+         //ctx2d.drawImage(imgi, 50, posyt + 10);
         //divide line
         ctx2d.fillStyle = "#2fb4c8";
         ctx2d.fillRect(0, posy - 5, 350, 1);
@@ -1529,36 +1555,38 @@ function drawWeather(ID) {
 
 
         //wind
-        ctx2d.fillStyle = "#39c46e";
-        ctx2d.fillRect(53, posy + 4, ws + 25, 18);
+        ctx2d.fillStyle = "#2fb4c8";
+        ctx2d.fillRect(53, posy + 4, ws + 25, 20);
 
         ctx2d.font = '14px Arial';
         ctx2d.fillStyle = "#fff";
         ctx2d.font = '12px Arial';
-        ctx2d.fillText("mph", 68, posyt + 8);
+        ctx2d.fillText("mph", 69, posyt + 8);
         ctx2d.fillText(zone.wspd.metric, 55, posyt + 8);
 
         //temp
         ctx2d.fillStyle = "#2fb4c8";
         //      ctx2d.fillStyle = "#66A68B";
         //      ctx2d.fillRect(start, posy + 32, temp, 16);
-        ctx2d.font = '12px Arial';
+        ctx2d.font = '16px Arial';
         //        ctx2d.fillStyle = temp_txt;
-        ctx2d.fillText(zone.temp.metric, (start + 2), posyt + 33);
+        ctx2d.fillText(zone.temp.metric, (start), posyt + 30);//33
+        ctx2d.fillText("°C", (start + 15), posyt + 30);//33
+        
 
         //rain
         if (rain == 10 || zone.qpf.metric.length == 0) {
-            ctx2d.fillStyle = "#2489ce";
-            ctx2d.fillRect(53, posy + 48, 10, 16);
-            ctx2d.font = '10px Arial';
-            ctx2d.fillStyle = "FFF";
-            ctx2d.fillText("0", 55, posyt + 49);
+         //   ctx2d.fillStyle = "#2489ce";
+         //   ctx2d.fillRect(53, posy + 48, 10, 16);
+         //   ctx2d.font = '10px Arial';
+         //   ctx2d.fillStyle = "FFF";
+  //          ctx2d.fillText("0", 55, posyt + 49);
         } else {
-            ctx2d.fillStyle = "#2489ce";
-            ctx2d.fillRect(53, posy + 48, rain, 16);
-            ctx2d.font = '10px Arial';
-            ctx2d.fillStyle = "FFF";
-            ctx2d.fillText(rain_txt, 45 + rain, posyt + 49);
+        //    ctx2d.fillStyle = "#2489ce";
+        //    ctx2d.fillRect(53, posy + 48, rain, 16);
+        //    ctx2d.font = '10px Arial';
+         //   ctx2d.fillStyle = "FFF";
+   //         ctx2d.fillText(rain_txt, 45 + rain, posyt + 49);
         }
         total_score = total_score + new_score;
 
@@ -1609,11 +1637,11 @@ function drawWeather(ID) {
 
         //var head_wind_val
         //alert(starval);
-        ctx2d.font = '12px Arial';
-        ctx2d.fillStyle = "#FFF";
+        ctx2d.font = '14px Arial';
+        ctx2d.fillStyle = "#f93";
         // ctx2d.fillText(brg + "." + pval0f + "." + arval1f + " .. " + (brg - 30) + "." + pval1f + "." + arval2f + " .. " + (brg + 30) + "." + pval2f + "." + arval3f + " " + foll_wind_val + "stm:" + numstars, 53, posyt);
         // ctx2d.fillText(brg + "." + pval0h + "." + arval1h + " .. " + (brg - 30) + "." + pval1h + "." + arval2h + " .. " + (brg + 30) + "." + pval2h + "." + arval3h + " " + head_wind_val + "st:" + starval, 53, posyt + 32);
-        ctx2d.fillText(brg + " .. " + arval1h + " .. " + arval2h + " .. " + arval2h, 53, posyt + 32);
+        ctx2d.fillText(cond, 53, posyt + 49);
         ctx2d.font = '13px Arial Bold ';
         ctx2d.fillStyle = "#ffca4a";
         //if (foll_wind_val > 20 || 
@@ -1719,7 +1747,24 @@ var bearing_store = ID+"_array";
 
 function showStars(ID,numstars){
     $('#location').append("End for " + ID + "  " + numstars + "</br>");
-    $('#stars_' + ID).html("<p>"+ numstars + "</p>");
+    var starhtml = "";
+    var starblankhtml= "";
+    var i = numstars;
+    var j;
+    j = (5 - i);
+ //   do {
+    for (var x = 0; x < i; x++) {
+        starhtml = starhtml + "<i class=\"fa fa-star\"></i>&nbsp;&nbsp;&nbsp;";
+        if (j > x) {
+           // starblankhtml = starblankhtml + "<i class=\"fa fa-star-empty\"></i>&nbsp;&nbsp;&nbsp;"
+        }
+        j--;
+    }
+  //  while (--i);
+    
+    
+    $('#stars_' + ID).html("<p>" + starhtml + starblankhtml+ "</p>");//<i class=\"fa fa-trophy\"></i></p>");
+    //<p>Calc<i class=\"fa fa-trophy\"></i></p>
 }
 
 function drawStarsO(ctx2d, i, y, xval) {

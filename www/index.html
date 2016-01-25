@@ -87,7 +87,7 @@
 <button class="btn btn-positive" onclick="stAct()">Refresh</button>
 <button class="btn btn-positive" onclick="showLocal()">Local storage</button>
 <button class="btn btn-primary" onclick="clearCache()">Clear</button>
-<button class="btn btn-primary" onclick="parse()">Parse</button>
+<button class="btn btn-primary" onclick="backAct()">Hide</button>
 </div>
 
 <div id="status_msgs" class="whitec" style="display:none"></div>
@@ -246,10 +246,10 @@
       <div class="dash-unit" id="tableback">
             <div class="timebtns">
       		<div class="btn-group btn-group-s" role="group">
-  <button type="button" class="btn btn-primary btn-sm active" id="hr1a">1-3Hrs1a</button>
-  <button type="button"  class="btn btn-primary btn-sm" id="hr2a">4-6Hrs</button>
-  <button type="button" class="btn btn-primary btn-sm" id="hr3a">7-9Hrs</button>
-   <button type="button" class="btn btn-primary btn-sm" id="hr4a">Mon</button>
+  <button type="button" class="btn btn-default btn-sm" autofocus="true" id="hr1a">1-3Hrs</button>
+  <button type="button" class="btn btn-default btn-sm" id="hr2a">4-6Hrs</button>
+  <button type="button" class="btn btn-default btn-sm" id="hr3a">7-9Hrs</button>
+   <button type="button" class="btn btn-default btn-sm" id="hr4a">Tue</button>
 </div>
 </div>
 
@@ -296,37 +296,43 @@
       </div>
       
       </div>
-      
+<div id="data_pills"></div>
  <div id="seg_leaderboard" style="display:none">
 	    <div class="row">
          <div class="col-xs-12 col-sm-12 col-lg-12">
           <!-- LOCAL TIME BLOCK -->
       		<div class="dash-unit" id="leaderback">
-	      		
-                <div class="timebtns">
-      		<div class="btn-group btn-group-s" role="group">
-  <button type="button" class="btn btn-primary btn-sm active" id="hr1a">1-3Hrs1a</button>
-  <button type="button"  class="btn btn-primary btn-sm" id="hr2a">4-6Hrs</button>
-  <button type="button" class="btn btn-primary btn-sm" id="hr3a">7-9Hrs</button>
-   <button type="button" class="btn btn-primary btn-sm" id="hr4a">Mon</button>
-</div>
+	      		<dtitle>Leaderboard</dtitle>
+	      		<hr>
+                <div id="canvas-holder3" style="text-align:center">
+<canvas id="leaderbd" width='400px' height='1500px' id="canvas"><canvas>
 </div>
 
-	      		<hr>
                <div id="lb_table" style="display:none"></div>
 
         </div>
         </div>
      </div>
 </div>
-      
+      <div id="seg_efforts" style="display:none">
+	    <div class="row">
+         <div class="col-xs-12 col-sm-12 col-lg-12">
+          <!-- LOCAL TIME BLOCK -->
+      		<div class="dash-unit" id="effortback">
+	      		<dtitle>Segment Efforts</dtitle>
+	      		<hr>
+               <div id="eff_table" style="display:none"></div>
+
+        </div>
+        </div>
+     </div>
+</div>
       <div id="seg_weather" style="display:none">
 	    <div class="row">
         <div class="col-xs-12 col-sm-12 col-lg-12">
           <!-- LOCAL TIME BLOCK -->
       		<div class="weather-unit">
-	      		<div id="data_pills"></div>
-                
+	      		<dtitle>Weather</dtitle>
 	      		<hr>
                 <div id="canvas-holder2" style="text-align:center">
 <canvas id="weather" width='400px' height='1500px' id="canvas"><canvas>
