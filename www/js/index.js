@@ -915,7 +915,7 @@ function seg_efforts(ID) {
            var jsonsegs = JSON.stringify(strava_segs);
             var jsonsegsall = JSON.stringify(strava_all_segs);
             
-           //alert(ID+"saving" + jsonsegsall);
+           alert(ID+"saving" + jsonsegsall);
             localStorage.setItem(ID+'_seg_efforts', jsonsegs);
             localStorage.setItem('all_seg_efforts', jsonsegsall);
             //var segct = localStorage.getItem('segct');
