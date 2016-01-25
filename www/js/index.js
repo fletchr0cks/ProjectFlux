@@ -349,7 +349,7 @@ function drawLeaderboard(ID) {
         ctx2d.font = '14px Arial';
         ctx2d.fillText(seg.name, 75, posyt + 10);
         var imgi = new Image();
-        imgi.src = "http://icons.wxug.com/i/c/a/nt_snow.gif"; //seg.profile;
+        imgi.src = seg.profile; //"http://icons.wxug.com/i/c/a/nt_snow.gif"; //;
         imgi.addEventListener("load", function () {
             ctx2d.drawImage(imgi, 6, posyt + 10);
         }, false);
@@ -423,7 +423,7 @@ function drawSegEffort(ID) {
     var act_ct = 0;
     $.each(j2.segs, function (i, seg) {
         //poly3(seg.ID,i,seg.name);
-        midhtml = midhtml + "<li><i class=\"read\"></i><p>" + seg.mov_time + "</p><p class=\"message\">" + seg.time + "</p>" +
+        midhtml = midhtml + "<li><i class=\"read\"></i><p>" + seg.mov_time + "</p><p class=\"message\">" + seg.kom_rank + "  " + seg.time + "</p>" +
         "<div class=\"actions\"></div></li>";
             act_ct++;
             //getW(seg.latlng,seg.ID);
@@ -531,7 +531,7 @@ function displayStars() { //get seg weather
     var jsonseg = localStorage.getItem('all_seg_efforts');
     var j2s = eval('(' + jsonseg + ')');
     var j2a = eval('(' + jsonact + ')');
-    $('#location').html("Calculating activity ratings for selected wind conditions");
+    $('#location').append("Calculating activity ratings for selected wind conditions </br>");
     $.each(j2s.segs, function (i, seg) {
         $('#stars_' + seg.ID).html("<p>Calculating ... </p>");
         calcStarsInline(seg.ID,3);
@@ -881,6 +881,7 @@ function seg_efforts(ID) {
         
             var jsontext = JSON.stringify(data);
             //$('#status_msgs').append(jsontext);
+             $('#location').append("Segment effort for: " + ID + ":</br>  "+jsontext + "<br/>");
             var ct = 0;
             //var entries = data['entry_count'];
            $.each(data.segment_efforts, function (i, seg) {
@@ -900,6 +901,7 @@ function seg_efforts(ID) {
                    "dist": seg.segment.distance,
                    "ID" : seg.segment.id,
                    "parentID" : seg.activity.id,
+                   "egain": parseInt(seg.segment.elevation_high - seg.segment.elevation_low),
                    "pb_rank" : seg.pr_rank,
                    "kom_rank" : seg.kom_rank
                 });//has it more than once
@@ -913,7 +915,7 @@ function seg_efforts(ID) {
            var jsonsegs = JSON.stringify(strava_segs);
             var jsonsegsall = JSON.stringify(strava_all_segs);
             
-           // alert(ID+"saving" + jsonsegsall);
+           alert(ID+"saving" + jsonsegsall);
             localStorage.setItem(ID+'_seg_efforts', jsonsegs);
             localStorage.setItem('all_seg_efforts', jsonsegsall);
             //var segct = localStorage.getItem('segct');
@@ -1002,7 +1004,7 @@ function clearCache() {
     $('#status_msgs').append("<br/> clearing ...");
     //  OAuth.initialize('7ZbKkdtjRFA8NVkn00ka1ixaIe8');
     //OAuth.clearCache();
-    var str = "weather";
+    var str = "lb_data_'";
     for (var i = 0; i < localStorage.length; i++) {
       //  if (localStorage.key(i) == 'weatherdata') {
      if (localStorage.key(i).indexOf(str) > -1) {
@@ -1013,7 +1015,7 @@ function clearCache() {
         // do something with localStorage.getItem(localStorage.key(i));
     }
     //localStorage.removeItem('weatherdata');
-    localStorage.removeItem('weatherdata_ct');
+  //  localStorage.removeItem('weatherdata_ct');
     showLocal();
 }
 
@@ -1022,8 +1024,8 @@ function showLocal() {
     $('#testBtns').show();
     $('#table_calc_area2').show();
     $('#info').show();
-    var str = "efforts";
-    var str2= "weather";
+    var str = "eff_data";
+    var str2= "efforts";
     for (var i = 0; i < localStorage.length; i++) {
       //  if (localStorage.key(i) == 'weatherdata') {
      if (localStorage.key(i).indexOf(str) > -1) {

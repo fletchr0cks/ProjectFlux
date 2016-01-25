@@ -573,13 +573,27 @@ var canvas = document.getElementById('weather');
 function showLeader(ID) {    
     $('#seg_weather').slideUp();
     $('#seg_efforts').slideUp();
+    var lbdata = localStorage.getItem('lb_data_'+ID);
+    if (lbdata == null) {
+    $('#location').append("no lb data for " + ID + "</br>");
     stLeader(ID);
+    } else{
+    drawLeaderboard(ID);
+     $('#location').append("have lb data for " + ID + "</br>");
+    }
 }
 
 function showEfforts(ID) {    
     $('#seg_weather').slideUp();
     $('#seg_leaderboard').slideUp();
+    var sedata = localStorage.getItem('eff_data_'+ID);
+    if (sedata == null) {
+    $('#location').append("no seff data for " + ID + "</br>");
     stEffort(ID);
+    } else{
+     drawSegEffort(ID);
+     $('#location').append("have seff data for " + ID + "</br>");
+    }
 }
 
 
@@ -693,16 +707,18 @@ function polySegs(ID, i, name) {
     $('#static_map').fadeIn();
     //alert(i + name);
     var json = localStorage.getItem('all_seg_efforts');
+    var sedata = localStorage.getItem('eff_data_'+ID);
     var j2 = eval('(' + json + ')');
     var dist = j2.segs[i].dist;
-    var kom_rank = j2.segs[i].kom_rank;
-    //var egain = j2.segs[i].egain;
+    var j2e = eval('(' + sedata + ')');
+    var kom_rank = j2e.segs[0].kom_rank; //j2.segs[i].kom_rank;
+    var egain = j2.segs[i].egain;
     var Lbbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showLeader(" + ID +")\">Leaderboard</button>";
     var Sebtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"showEfforts(" + ID +")\">Segment Efforts</button>";
     var Backbtn ="<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"backAct()\">Back</button>";
     $('#seg_title').html("<h5>" + name + "</h5>");
-    $('#seg_dist').html("<p><bold>" + dist + "</bold></p>");
-    $('#seg_egain').html("<p><bold>" + kom_rank + "</bold></p>");
+    $('#seg_dist').html("<p><bold>" + dist + "m</bold></p>");
+    $('#seg_egain').html("<p><bold>" + egain + "m</bold></p>");
    // $('#leaderboardBtn').html(Lbbtn);
     $('#backBtn').html(Backbtn);
    // $('#seBtn').html(Sebtn);
