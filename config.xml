@@ -6,7 +6,7 @@
   <feature name="Geolocation">
     <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
   </feature>
-  <preference name="phonegap-version" value="3.7.0" />
+  <preference name='phonegap-version' value='cli-5.2.0' />
   <preference name="permissions" value="none"/>
   <preference name="orientation" value="default"/>
   <preference name="target-device" value="universal"/>
